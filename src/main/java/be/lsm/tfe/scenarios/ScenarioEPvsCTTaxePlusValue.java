@@ -25,7 +25,7 @@ public final class ScenarioEPvsCTTaxePlusValue {
         ParametresRendement rendement = new ParametresRendement(0.07,0.03  );
 
         int versementMin = 0;
-        int versementMax = 2_000;
+        int versementMax = 1600;
 
         ParametresBranche23 paramsEP = ParametresBranche23.builder()
                 .taxeOperationsAssurance(0.0)
@@ -96,7 +96,7 @@ public final class ScenarioEPvsCTTaxePlusValue {
         // ════════════════════════════════════════════════════════════════════
         //  ★ GÉNÉRATION DU GRAPHIQUE
         // ════════════════════════════════════════════════════════════════════
-        String cheminSortie = "C:/Users/jerem/Downloads/tteeee/scenario_ep_vs_ct_taxe_plus_value.png";  // ★ à adapter
+        String cheminSortie = "C:/Users/jerem/Downloads/tteeeeee/scenario_ep_vs_ct_taxe_plus_value.png";  // ★ à adapter
 
         RendeurGraphique.generer(
                 resultatsEP, resultatsCT, croisements,

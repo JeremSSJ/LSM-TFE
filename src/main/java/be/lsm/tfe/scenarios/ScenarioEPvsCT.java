@@ -21,7 +21,7 @@ public final class ScenarioEPvsCT {
         ParametresRendement rendement = new ParametresRendement(0.07,0.03  );
 
         int versementMin = 0;
-        int versementMax = 2_000;
+        int versementMax = 1600;
 
         ParametresBranche23 paramsEP = ParametresBranche23.builder()
                 .taxeOperationsAssurance(0.0)
@@ -92,7 +92,7 @@ public final class ScenarioEPvsCT {
         // ════════════════════════════════════════════════════════════════════
         //  ★ GÉNÉRATION DU GRAPHIQUE
         // ════════════════════════════════════════════════════════════════════
-        String cheminSortie = "C:/Users/jerem/Downloads/tteeee/scenario_ep_vs_ct.png";  // ★ à adapter
+        String cheminSortie = "C:/Users/jerem/Downloads/tteeeeee/scenario_ep_vs_ct.png";  // ★ à adapter
 
         RendeurGraphique.generer(
                 resultatsEP, resultatsCT, croisements,

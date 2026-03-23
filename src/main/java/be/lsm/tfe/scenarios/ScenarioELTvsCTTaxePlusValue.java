@@ -17,14 +17,14 @@ public final class ScenarioELTvsCTTaxePlusValue {
         ProfilInvestisseur profil = new ProfilInvestisseur(
                 "Marie", "Dupont",
                 2008,
-                18,
+                53,
                 64
         );
 
-        ParametresRendement rendement = new ParametresRendement(0.07, 0.03 );
+        ParametresRendement rendement = new ParametresRendement(0.15, 0.03 );
 
         int versementMin = 0;
-        int versementMax = 2_000;
+        int versementMax = 1600;
 
         ParametresBranche23 paramsELT = ParametresBranche23.builder()
                 .taxeOperationsAssurance(Constants.ELT_TAXE_ASSURANCE)  // 2%
@@ -95,7 +95,7 @@ public final class ScenarioELTvsCTTaxePlusValue {
         // ════════════════════════════════════════════════════════════════════
         //  ★ GÉNÉRATION DU GRAPHIQUE
         // ════════════════════════════════════════════════════════════════════
-        String cheminSortie = "C:/Users/jerem/Downloads/tteeee/scenario_elt_vs_ct_taxe_plus_value.png";  // ★ à adapter
+        String cheminSortie = "C:/Users/jerem/Downloads/tteeeeee/scenario_elt_vs_ct_taxe_plus_value.png";  // ★ à adapter
 
         RendeurGraphique.generer(
                 resultatsELT, resultatsCT, croisements,
