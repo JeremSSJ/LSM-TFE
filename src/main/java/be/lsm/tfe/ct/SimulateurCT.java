@@ -84,6 +84,7 @@ public final class SimulateurCT implements Simulateur {
                 * (1.0 - params.fraisGestionAnnuels());
     }
 
+    //todo douteux le calcul de la plus value
     public double calculerCapitalNet(double reserve, double coutDeBase, int dureeAnnees) {
         double plusValue = Math.max(0.0, reserve - coutDeBase);
         double taxePV    = params.exoneration().calculerTaxe(

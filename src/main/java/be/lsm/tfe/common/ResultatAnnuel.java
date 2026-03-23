@@ -1,5 +1,8 @@
 package be.lsm.tfe.common;
 
+import lombok.Builder;
+
+@Builder
 public record ResultatAnnuel(
         int    anneeCalendaire,
         int    age,
