@@ -9,6 +9,8 @@ public final class CalculateurVAN {
         return actualiser(capitalFinalNet, tauxOLO, dureeAnnees);
     }
 
+    //todo, devrait être t+2 alors non ? si on part du principe que tous les flux sont en fin
+    //todo d 'année et que première année on verse en 1
     public static double vanEconomiesFiscales(List<ResultatAnnuel> resultatsAnnuels, double tauxOLO) {
         return IntStream.range(0, resultatsAnnuels.size())
                 .mapToDouble(t -> {

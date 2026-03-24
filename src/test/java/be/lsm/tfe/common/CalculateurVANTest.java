@@ -17,19 +17,20 @@ class CalculateurVANTest {
     @Test
     void vanEconomiesFiscales() {
         List<ResultatAnnuel> resultatsAnnuels = List.of(
-                ResultatAnnuel.builder().economiesFiscales(335).build(),
-                ResultatAnnuel.builder().economiesFiscales(335).build(),
-                ResultatAnnuel.builder().economiesFiscales(335).build(),
-                ResultatAnnuel.builder().economiesFiscales(335).build(),
-                ResultatAnnuel.builder().economiesFiscales(335).build(),
-                ResultatAnnuel.builder().economiesFiscales(335).build(),
-                ResultatAnnuel.builder().economiesFiscales(335).build(),
-                ResultatAnnuel.builder().economiesFiscales(335).build(),
-                ResultatAnnuel.builder().economiesFiscales(335).build(),
-                ResultatAnnuel.builder().economiesFiscales(335).build()
+                ResultatAnnuel.builder().economiesFiscales(337.5).build(),
+                ResultatAnnuel.builder().economiesFiscales(337.5).build(),
+                ResultatAnnuel.builder().economiesFiscales(337.5).build(),
+                ResultatAnnuel.builder().economiesFiscales(337.5).build(),
+                ResultatAnnuel.builder().economiesFiscales(337.5).build(),
+                ResultatAnnuel.builder().economiesFiscales(337.5).build(),
+                ResultatAnnuel.builder().economiesFiscales(337.5).build(),
+                ResultatAnnuel.builder().economiesFiscales(337.5).build(),
+                ResultatAnnuel.builder().economiesFiscales(337.5).build(),
+                ResultatAnnuel.builder().economiesFiscales(337.5).build()
         );
 
-        assertEquals(3009.1659770911488, CalculateurVAN.vanEconomiesFiscales(resultatsAnnuels, 0.02));
+        //todo corriger quand économie fiscale seront correctes
+        assertEquals(3031.6224396067546, CalculateurVAN.vanEconomiesFiscales(resultatsAnnuels, 0.02));
     }
 
     @Test

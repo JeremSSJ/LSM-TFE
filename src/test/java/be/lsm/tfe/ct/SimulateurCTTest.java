@@ -46,7 +46,14 @@ class SimulateurCTTest {
 
     @Test
     void calculerCapitalNet() {
+        SimulateurCT simulateur = new SimulateurCT(ParametresCT.builder()
+                .exoneration(new ExonerationPlusValues(10000, 1000, 5))
+                .tauxTaxePlusValues(0.1)
+                .build());
 
+        assertEquals(139500 , simulateur.calculerCapitalNet(150000, 30000, 50));
+
+        assertEquals(150000 , simulateur.calculerCapitalNet(150000, 150001, 50));
     }
 
 }

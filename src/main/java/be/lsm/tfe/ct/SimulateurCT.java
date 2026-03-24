@@ -84,9 +84,11 @@ public final class SimulateurCT implements Simulateur {
                 * (1.0 - params.fraisGestionAnnuels());
     }
 
-    //todo douteux le calcul de la plus value
-    public double calculerCapitalNet(double reserve, double coutDeBase, int dureeAnnees) {
-        double plusValue = Math.max(0.0, reserve - coutDeBase);
+    //on utilise le prix de revient moyen pondéré même si en belgique on va faire du fifo
+    //étant donné que dans notre cas on vend tout d'un coût et pas petit à petit dans le temps
+    //les deux manières de faire sont équivalentes
+    public double calculerCapitalNet(double reserve, double miseTotale, int dureeAnnees) {
+        double plusValue = Math.max(0.0, reserve - miseTotale);
         double taxePV    = params.exoneration().calculerTaxe(
                 plusValue, params.tauxTaxePlusValues(), dureeAnnees);
         return reserve - taxePV;
