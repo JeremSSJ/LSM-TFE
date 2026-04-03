@@ -137,7 +137,8 @@ public final class GenerateurHeatmap {
                 g2.drawRect(x, y, CELL_W - 1, CELL_H - 1);
 
                 // ── Annotation : premier croisement ──────────────────────────
-                if (l != null && !Double.isNaN(l.premierCroisement())) {
+                if (l != null && !Double.isNaN(l.premierCroisement())
+                        && l.premierCroisement() > 1.0) {
                     String texte = "%,.0f€".formatted(l.premierCroisement());
                     g2.setFont(new Font("SansSerif", Font.PLAIN, 9));
                     g2.setColor(couleurTexte(fond));

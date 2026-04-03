@@ -38,6 +38,8 @@ public final class ComparateurVehicules {
                 .filter(i -> signeDifferent(
                         diffVAN(resultatsA, resultatsB, i),
                         diffVAN(resultatsA, resultatsB, i + 1)))
+                .filter(i -> Math.abs(resultatsA.get(i).vanTotale()) > 1e-6
+                        || Math.abs(resultatsB.get(i).vanTotale()) > 1e-6)
                 .mapToObj(i -> interpolerCroisement(resultatsA, resultatsB, i, nomA, nomB))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
