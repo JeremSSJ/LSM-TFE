@@ -9,6 +9,17 @@ import java.util.List;
 /**
  * Lit un fichier CSV généré par {@link ExportateurRapport} et retourne
  * la liste des lignes sous forme de {@link LigneRapportCSV}.
+ *
+ * <p>Format attendu (21 colonnes, séparateur ;) :
+ * vehiculeA ; vehiculeB ; rendement_pct ; age_debut ; age_fin ;
+ * taux_taxe_pv_pct ; versement_min ; versement_max ;
+ * taux_dominance_A_pct ; taux_dominance_B_pct ;
+ * nb_croisements ; premier_croisement_eur ;
+ * avantage_moyen_A_eur ; avantage_moyen_B_eur ;
+ * avantage_max_A_eur ; avantage_max_B_eur ;
+ * aire_ecarts_eur ; dominant ;
+ * van_moy_capital_b23_eur ; van_moy_eco_fiscales_b23_eur ; van_moy_capital_ct_eur
+ * </p>
  */
 public final class LecteurCSV {
 
@@ -38,24 +49,27 @@ public final class LecteurCSV {
     private static LigneRapportCSV parseLigne(String csv) {
         String[] c = csv.split(";", -1);
         return new LigneRapportCSV(
-                c[0].trim(),                          // vehiculeA
-                c[1].trim(),                          // vehiculeB
-                parseDouble(c[2]),                    // rendementPct
-                parseInt(c[3]),                       // ageDebut
-                parseInt(c[4]),                       // ageFin
-                parseDouble(c[5]),                    // tauxTaxePVpct
-                parseInt(c[6]),                       // versementMin
-                parseInt(c[7]),                       // versementMax
-                parseDouble(c[8]),                    // tauxDominanceA
-                parseDouble(c[9]),                    // tauxDominanceB
-                parseInt(c[10]),                      // nbCroisements
-                parseDoubleOuNaN(c[11]),              // premierCroisement
-                parseDouble(c[12]),                   // avantMoyA
-                parseDouble(c[13]),                   // avantMoyB
-                parseDouble(c[14]),                   // avantMaxA
-                parseDouble(c[15]),                   // avantMaxB
-                parseDouble(c[16]),                   // aireEcarts
-                c[17].trim()                          // dominant
+                c[0].trim(),            // vehiculeA
+                c[1].trim(),            // vehiculeB
+                parseDouble(c[2]),      // rendementPct
+                parseInt(c[3]),         // ageDebut
+                parseInt(c[4]),         // ageFin
+                parseDouble(c[5]),      // tauxTaxePVpct
+                parseInt(c[6]),         // versementMin
+                parseInt(c[7]),         // versementMax
+                parseDouble(c[8]),      // tauxDominanceA
+                parseDouble(c[9]),      // tauxDominanceB
+                parseInt(c[10]),        // nbCroisements
+                parseDoubleOuNaN(c[11]),// premierCroisement
+                parseDouble(c[12]),     // avantMoyA
+                parseDouble(c[13]),     // avantMoyB
+                parseDouble(c[14]),     // avantMaxA
+                parseDouble(c[15]),     // avantMaxB
+                parseDouble(c[16]),     // aireEcarts
+                c[17].trim(),           // dominant
+                parseDouble(c[18]),     // vanMoyCapitalB23
+                parseDouble(c[19]),     // vanMoyEcoFiscalesB23
+                parseDouble(c[20])      // vanMoyCapitalCT
         );
     }
 
