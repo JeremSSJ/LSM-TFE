@@ -4,6 +4,7 @@ package be.lsm.tfe.common;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -29,8 +30,20 @@ class CalculateurVANTest {
                 ResultatAnnuel.builder().economiesFiscales(337.5).build()
         );
 
-        //todo corriger quand économie fiscale seront correctes
         assertEquals(3031.6224396067546, CalculateurVAN.vanEconomiesFiscales(resultatsAnnuels, 0.02));
+    }
+
+    @Test
+    void vanEconomiesFiscales_48_elements_150_taux003() {
+        double tauxOLO = 0.03;
+
+        List<ResultatAnnuel> resultats = IntStream.range(0, 48)
+                .mapToObj(i -> ResultatAnnuel.builder().economiesFiscales(150.0).build())
+                .toList();
+
+        double van = CalculateurVAN.vanEconomiesFiscales(resultats, tauxOLO);
+
+        assertEquals(3790.01, van, 1e-2);
     }
 
     @Test
