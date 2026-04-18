@@ -10,6 +10,7 @@ import be.lsm.tfe.ct.SimulateurCT;
 
 import java.util.List;
 
+@Deprecated
 public final class ScenarioELTvsCTTaxePlusValue {
 
     public static void main(String[] args) throws Exception {
@@ -95,7 +96,7 @@ public final class ScenarioELTvsCTTaxePlusValue {
         // ════════════════════════════════════════════════════════════════════
         //  ★ GÉNÉRATION DU GRAPHIQUE
         // ════════════════════════════════════════════════════════════════════
-        String cheminSortie = "C:/Users/jerem/Downloads/tteeeeee/scenario_elt_vs_ct_taxe_plus_value.png";  // ★ à adapter
+        String cheminSortie = "C:/Users/jerem/Downloads/dfsdfsdff/scenario_elt_vs_ct_taxe_plus_value.png";  // ★ à adapter
 
         RendeurGraphique.generer(
                 resultatsELT, resultatsCT, croisements,

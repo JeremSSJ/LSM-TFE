@@ -17,6 +17,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.stream.IntStream;
 
+@Deprecated
 public final class RendeurGraphique {
 
     // ── Palette ───────────────────────────────────────────────────────────────

@@ -6,6 +6,7 @@ import be.lsm.tfe.ct.*;
 
 import java.util.List;
 
+@Deprecated
 public final class ScenarioELTvsCT {
 
     public static void main(String[] args) throws Exception {
@@ -91,7 +92,7 @@ public final class ScenarioELTvsCT {
         // ════════════════════════════════════════════════════════════════════
         //  ★ GÉNÉRATION DU GRAPHIQUE
         // ════════════════════════════════════════════════════════════════════
-        String cheminSortie = "C:/Users/jerem/Downloads/tteeeeee/scenario_elt_vs_ct.png";  // ★ à adapter
+        String cheminSortie = "C:/Users/jerem/Downloads/dfsdfsdff/scenario_elt_vs_ct.png";  // ★ à adapter
 
         RendeurGraphique.generer(
                 resultatsELT, resultatsCT, croisements,

@@ -11,7 +11,7 @@ import be.lsm.tfe.ct.SimulateurCT;
 import java.io.IOException;
 import java.util.List;
 
-
+@Deprecated
 public final class ScenarioEPvsCTEssaiBoucle {
 
     public static void main(String[] args) throws Exception {
@@ -97,7 +97,7 @@ public final class ScenarioEPvsCTEssaiBoucle {
         // ════════════════════════════════════════════════════════════════════
         //  ★ GÉNÉRATION DU GRAPHIQUE
         // ════════════════════════════════════════════════════════════════════
-        String cheminSortie = "C:/Users/jerem/Downloads/loop/scenario_ep_vs_ct" + rendementAnnuel + ".png";  // ★ à adapter
+        String cheminSortie = "C:/Users/jerem/Downloads/dfsdfsdff/scenario_ep_vs_ct" + rendementAnnuel + ".png";  // ★ à adapter
 
         RendeurGraphique.generer(
                 resultatsEP, resultatsCT, croisements,
