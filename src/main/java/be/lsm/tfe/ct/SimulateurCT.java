@@ -14,7 +14,9 @@ public final class SimulateurCT implements Simulateur {
     }
 
     @Override
-    public String nomVehicule() { return "Compte-Titres"; }
+    public String nomVehicule() {
+        return "Compte-Titres";
+    }
 
     @Override
     public ResultatSimulation simuler(ProfilInvestisseur profil,
@@ -26,35 +28,37 @@ public final class SimulateurCT implements Simulateur {
     }
 
     public AccumulationResult simulerAnnees(ProfilInvestisseur profil,
-                                             double versementAnnuel,
-                                             ParametresRendement rendement) {
+                                            double versementAnnuel,
+                                            ParametresRendement rendement) {
 
-        List<ResultatAnnuel> annees     = new ArrayList<>();
-        double               reserve    = 0.0;
-        double               coutDeBase = 0.0;
+        List<ResultatAnnuel> annees = new ArrayList<>();
+        double reserve = 0.0;
+        double miseDeBase = 0.0;
 
         for (int annee = profil.anneeDebutVersements();
              annee <= profil.anneeFinVersements();
              annee++) {
 
-            int    age          = profil.ageEnAnnee(annee);
-            double versementNet = calculerVersementNet(versementAnnuel);
+            int age = profil.ageEnAnnee(annee);
 
-            reserve    += versementNet;
-            coutDeBase += versementNet;
+            miseDeBase += versementAnnuel;
 
-            reserve = capitaliserReserve(reserve, rendement);
+            if (age == profil.ageDebut()) {
+                reserve = versementAnnuel;
+            } else {
+                reserve = capitaliserReserve(reserve, rendement) + versementAnnuel;
+            }
 
-            annees.add(ResultatAnnuel.sansAnticipative(annee, age, reserve, versementNet, 0.0));
+            annees.add(ResultatAnnuel.sansAnticipative(annee, age, reserve, versementAnnuel, 0.0));
         }
 
-        return new AccumulationResult(annees, reserve, coutDeBase);
+        return new AccumulationResult(annees, reserve, miseDeBase);
     }
 
     public ResultatSimulation construireResultat(ProfilInvestisseur profil,
-                                                  double versementAnnuel,
-                                                  ParametresRendement rendement,
-                                                  AccumulationResult accumulation) {
+                                                 double versementAnnuel,
+                                                 ParametresRendement rendement,
+                                                 AccumulationResult accumulation) {
 
         double capitalNet = calculerCapitalNet(accumulation.reserve(),
                 accumulation.coutDeBase(),
@@ -62,20 +66,21 @@ public final class SimulateurCT implements Simulateur {
 
         double vanCap = CalculateurVAN.vanCapital(capitalNet, rendement.tauxOLO(), profil.dureeAnnees());
 
+        double coutTOBParAn = versementAnnuel * params.taxeOperationsBourse();
+        double coutFraisParAn = versementAnnuel * params.fraisParVersement();
+        double vanTOB = CalculateurVAN.vanCoutsAnnuels(coutTOBParAn, rendement.tauxOLO(), profil.dureeAnnees());
+        double vanFrais = CalculateurVAN.vanCoutsAnnuels(coutFraisParAn, rendement.tauxOLO(), profil.dureeAnnees());
+
+        double vanTotale = vanCap - vanTOB - vanFrais;
+
         return new ResultatSimulation(
                 versementAnnuel,
                 accumulation.reserve(),
                 capitalNet,
-                vanCap,
+                vanTotale,
                 0.0,
-                vanCap,
+                vanTotale,
                 accumulation.annees());
-    }
-
-    public double calculerVersementNet(double versementAnnuel) {
-        return versementAnnuel
-                * (1.0 - params.taxeOperationsBourse())
-                * (1.0 - params.fraisParVersement());
     }
 
     public double capitaliserReserve(double reserve, ParametresRendement rendement) {
@@ -89,14 +94,14 @@ public final class SimulateurCT implements Simulateur {
     //les deux manières de faire sont équivalentes
     public double calculerCapitalNet(double reserve, double miseTotale, int dureeAnnees) {
         double plusValue = Math.max(0.0, reserve - miseTotale);
-        double taxePV    = params.exoneration().calculerTaxe(
-                plusValue, params.tauxTaxePlusValues(), dureeAnnees);
+        double taxePV = params.exoneration().calculerTaxe(plusValue, params.tauxTaxePlusValues(), dureeAnnees);
         return reserve - taxePV;
     }
 
     public record AccumulationResult(
             List<ResultatAnnuel> annees,
-            double               reserve,
-            double               coutDeBase
-    ) {}
+            double reserve,
+            double coutDeBase
+    ) {
+    }
 }

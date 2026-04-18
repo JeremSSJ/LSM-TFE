@@ -68,7 +68,7 @@ public final class ScenarioStatistiquesEPvsCT {
                 .ageTaxeAnticipative(60)
                 .dureeMinAvantAnticipativeSiSouscritTard(10)
                 .regleReductionFiscale(RegleReductionFiscale.pourEpargnePension())
-                .ageLimiteReductionFiscale(64)
+                .ageLimiteReductionFiscale(65)
                 .build();
 
         // Compte-Titres sans taxe PV

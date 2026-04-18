@@ -19,6 +19,12 @@ public final class CalculateurVAN {
                 .sum();
     }
 
+    public static double vanCoutsAnnuels(double coutAnnuel, double tauxOLO, int dureeAnnees) {
+        return IntStream.rangeClosed(0, dureeAnnees)
+                .mapToDouble(t -> actualiser(coutAnnuel, tauxOLO, t))
+                .sum();
+    }
+
     public static double actualiser(double montant, double tauxOLO, int annee) {
         if (annee < 0) throw new IllegalArgumentException("L'année ne peut être négative : " + annee);
         return montant / Math.pow(1.0 + tauxOLO, annee);

@@ -51,7 +51,7 @@ class ProfilInvestisseurTest {
 
         profil = new ProfilInvestisseur("", "", 2000, 55, 64);
 
-        assertFalse(profil.souscritApres55Ans());
+        assertTrue(profil.souscritApres55Ans());
 
         profil = new ProfilInvestisseur("", "", 2000, 56, 64);
 

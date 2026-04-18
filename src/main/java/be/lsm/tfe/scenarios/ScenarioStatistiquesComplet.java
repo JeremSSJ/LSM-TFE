@@ -97,7 +97,7 @@ public final class ScenarioStatistiquesComplet {
                 .ageTaxeAnticipative(60)
                 .dureeMinAvantAnticipativeSiSouscritTard(10)
                 .regleReductionFiscale(RegleReductionFiscale.pourEpargnePension())
-                .ageLimiteReductionFiscale(64)
+                .ageLimiteReductionFiscale(65)
                 .build();
 
         ParametresBranche23 paramsELT = ParametresBranche23.builder()
@@ -108,7 +108,7 @@ public final class ScenarioStatistiquesComplet {
                 .ageTaxeAnticipative(60)
                 .dureeMinAvantAnticipativeSiSouscritTard(10)
                 .regleReductionFiscale(RegleReductionFiscale.pourEpargneLongTerme())
-                .ageLimiteReductionFiscale(64)
+                .ageLimiteReductionFiscale(65)
                 .build();
 
         Simulateur simEP    = new SimulateurBranche23(paramsEP,  "EP Branche 23");

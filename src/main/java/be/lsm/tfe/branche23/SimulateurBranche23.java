@@ -44,16 +44,25 @@ public final class SimulateurBranche23 implements Simulateur {
             int    age          = profil.ageEnAnnee(annee);
             double versementNet = calculerVersementNet(versementAnnuel);
 
-            reserve = capitaliserReserve(reserve + versementNet, rendement);
+            if(age == profil.ageDebut()) {
+                reserve = versementNet;
+            }
+            else {
+                reserve = capitaliserReserve(reserve, rendement) + versementNet;
+            }
 
             boolean anticipativeCetteAnnee = false;
             if (!taxeApplique && annee == anneeAnticipative) {
-                reserve                = appliquerTaxeAnticipative(reserve);
+                reserve                = appliquerTaxeAnticipative(reserve - versementNet);
                 taxeApplique           = true;
                 anticipativeCetteAnnee = true;
             }
 
             double economie = calculerEconomieFiscale(age, versementAnnuel);
+
+            if (anticipativeCetteAnnee) {
+                reserve = reserve + versementNet;
+            }
 
             annees.add(anticipativeCetteAnnee
                     ? ResultatAnnuel.avecAnticipative(annee, age, reserve, versementNet, economie)

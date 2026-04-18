@@ -57,7 +57,7 @@ public final class ScenarioStatistiquesELTvsCT {
                 .ageTaxeAnticipative(60)
                 .dureeMinAvantAnticipativeSiSouscritTard(10)
                 .regleReductionFiscale(RegleReductionFiscale.pourEpargneLongTerme())
-                .ageLimiteReductionFiscale(64)
+                .ageLimiteReductionFiscale(65)
                 .build();
 
         ParametresCT paramsCTsans = ParametresCT.builder()

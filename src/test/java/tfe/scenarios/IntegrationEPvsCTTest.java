@@ -115,7 +115,7 @@ class IntegrationEPvsCTTest {
                     .ageTaxeAnticipative(60)
                     .dureeMinAvantAnticipativeSiSouscritTard(10)
                     .regleReductionFiscale(RegleReductionFiscale.pourEpargnePension())
-                    .ageLimiteReductionFiscale(64)
+                    .ageLimiteReductionFiscale(65)
                     .build();
 
             double vanSans = new SimulateurBranche23(sansFreais, "EP")
@@ -174,7 +174,7 @@ class IntegrationEPvsCTTest {
                     .ageTaxeAnticipative(60)
                     .dureeMinAvantAnticipativeSiSouscritTard(10)
                     .regleReductionFiscale(RegleReductionFiscale.pourEpargneLongTerme())
-                    .ageLimiteReductionFiscale(64)
+                    .ageLimiteReductionFiscale(65)
                     .build();
 
             double vanAvec = new SimulateurBranche23(avecTOA, "ELT").simuler(profil, 1_000.0, rendement).vanTotale();
