@@ -80,16 +80,4 @@ public final class ComparateurVehicules {
         if (x1 == x0) return y0;
         return y0 + (y1 - y0) * (x - x0) / (x1 - x0);
     }
-
-    public static List<Double> extraireVersements(List<ResultatSimulation> resultats) {
-        return resultats.stream()
-                .map(ResultatSimulation::versementAnnuel)
-                .collect(Collectors.toList());
-    }
-
-    public static List<Double> extraireVanTotales(List<ResultatSimulation> resultats) {
-        return resultats.stream()
-                .map(ResultatSimulation::vanTotale)
-                .collect(Collectors.toList());
-    }
 }

@@ -133,17 +133,6 @@ public final class ScenarioStatistiquesEPvsCT {
                     statsAvec.instrumentDominantGlobal());
         }
 
-        // ── Tableaux console ─────────────────────────────────────────────────
-        System.out.println("\n── EP vs CT sans taxe PV ──────────────────────────────────────");
-        ExportateurRapport.afficherTableauConsole(lignesSans);
-        ExportateurRapport.afficherBilanNarratif(lignesSans,
-                simEP.nomVehicule(), "CT (sans taxe PV)");
-
-        System.out.println("\n── EP vs CT avec taxe PV 10% ──────────────────────────────────");
-        ExportateurRapport.afficherTableauConsole(lignesAvec);
-        ExportateurRapport.afficherBilanNarratif(lignesAvec,
-                simEP.nomVehicule(), "CT (taxe PV 10%)");
-
         // ── Export CSV ───────────────────────────────────────────────────────
         ExportateurRapport.ecrireCSV(lignesSans, CHEMIN_CSV_SANS_TAXE);
         ExportateurRapport.ecrireCSV(lignesAvec, CHEMIN_CSV_AVEC_TAXE);

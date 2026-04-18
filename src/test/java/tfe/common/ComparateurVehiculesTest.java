@@ -171,28 +171,4 @@ class ComparateurVehiculesTest {
             };
         }
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    @Nested
-    @DisplayName("extraireVersements() / extraireVanTotales()")
-    class Extraction {
-
-        @Test
-        @DisplayName("extraireVersements retourne les versements dans l'ordre")
-        void extraireVersements_ordrePreserve() {
-            List<ResultatSimulation> res = ComparateurVehicules.simulerPlage(
-                    stubSimulateur("X", 1.0), profil, rendement, 10, 15);
-            List<Double> versements = ComparateurVehicules.extraireVersements(res);
-            assertThat(versements).containsExactly(10.0, 11.0, 12.0, 13.0, 14.0, 15.0);
-        }
-
-        @Test
-        @DisplayName("extraireVanTotales retourne mult × versement dans l'ordre")
-        void extraireVanTotales_ordrePreserve() {
-            List<ResultatSimulation> res = ComparateurVehicules.simulerPlage(
-                    stubSimulateur("X", 2.0), profil, rendement, 1, 3);
-            List<Double> vans = ComparateurVehicules.extraireVanTotales(res);
-            assertThat(vans).containsExactly(2.0, 4.0, 6.0);
-        }
-    }
 }

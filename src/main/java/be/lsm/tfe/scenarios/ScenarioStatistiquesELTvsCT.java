@@ -117,16 +117,6 @@ public final class ScenarioStatistiquesELTvsCT {
                     statsAvec.instrumentDominantGlobal());
         }
 
-        System.out.println("\n── ELT vs CT sans taxe PV ──────────────────────────────────────");
-        ExportateurRapport.afficherTableauConsole(lignesSans);
-        ExportateurRapport.afficherBilanNarratif(lignesSans,
-                simELT.nomVehicule(), "CT (sans taxe PV)");
-
-        System.out.println("\n── ELT vs CT avec taxe PV 10% ──────────────────────────────────");
-        ExportateurRapport.afficherTableauConsole(lignesAvec);
-        ExportateurRapport.afficherBilanNarratif(lignesAvec,
-                simELT.nomVehicule(), "CT (taxe PV 10%)");
-
         ExportateurRapport.ecrireCSV(lignesSans, CHEMIN_CSV_SANS_TAXE);
         ExportateurRapport.ecrireCSV(lignesAvec, CHEMIN_CSV_AVEC_TAXE);
     }

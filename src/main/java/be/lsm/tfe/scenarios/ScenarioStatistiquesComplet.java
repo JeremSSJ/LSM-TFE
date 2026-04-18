@@ -213,19 +213,6 @@ public final class ScenarioStatistiquesComplet {
         ExportateurRapport.ecrireCSV(epAvec,  CSV_EP_AVEC_PV);
         ExportateurRapport.ecrireCSV(eltSans, CSV_ELT_SANS_PV);
         ExportateurRapport.ecrireCSV(eltAvec, CSV_ELT_AVEC_PV);
-
-        // ── Bilans finaux ─────────────────────────────────────────────────────
-        System.out.println("\n═══ EP vs CT sans taxe PV ══════════════════════════════════");
-        ExportateurRapport.afficherBilanNarratif(epSans,  "EP Branche 23", "CT sans taxe PV");
-
-        System.out.println("\n═══ EP vs CT avec taxe PV ══════════════════════════════════");
-        ExportateurRapport.afficherBilanNarratif(epAvec,  "EP Branche 23", "CT taxe PV 10%");
-
-        System.out.println("\n═══ ELT vs CT sans taxe PV ═════════════════════════════════");
-        ExportateurRapport.afficherBilanNarratif(eltSans, "ELT Branche 23", "CT sans taxe PV");
-
-        System.out.println("\n═══ ELT vs CT avec taxe PV ═════════════════════════════════");
-        ExportateurRapport.afficherBilanNarratif(eltAvec, "ELT Branche 23", "CT taxe PV 10%");
     }
 
     // ── Bilan intermédiaire par profil d'âge ─────────────────────────────────
