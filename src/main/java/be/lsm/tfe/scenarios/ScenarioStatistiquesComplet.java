@@ -36,24 +36,24 @@ public final class ScenarioStatistiquesComplet {
     // ════════════════════════════════════════════════════════════════════
 
     /** Âge de fin — fixe pour tous les scénarios. */
-    private static final int    AGE_FIN       = 64;
+    private static final int    AGE_FIN       = 65;
 
     /** Premier âge de début (profil le plus long). */
     private static final int    AGE_DEBUT_MIN = 18;
 
     /** Dernier âge de début (profil le plus court). */
-    private static final int    AGE_DEBUT_MAX = 54;
+    private static final int    AGE_DEBUT_MAX = 55;
 
     private static final int    ANNEE_NAISS   = 2008;
     private static final double OLO           = 0.03;
 
-    private static final double RENDEMENT_MIN = 0.01;
-    private static final double RENDEMENT_MAX = 0.15;
+    private static final double RENDEMENT_MIN = 0.03;
+    private static final double RENDEMENT_MAX = 0.1;
     private static final double RENDEMENT_PAS = 0.01;
 
     // Plages de versements
     private static final int VERSEMENT_MIN_EP  = 0;
-    private static final int VERSEMENT_MAX_EP  = 1_600;
+    private static final int VERSEMENT_MAX_EP  = 1_350;
     private static final int VERSEMENT_MIN_ELT = 0;
     private static final int VERSEMENT_MAX_ELT = 2_450;
 
@@ -74,7 +74,7 @@ public final class ScenarioStatistiquesComplet {
         // ── Paramètres CT (communs aux 4 scénarios) ───────────────────────────
         ParametresCT paramsCTsans = ParametresCT.builder()
                 .taxeOperationsBourse(0.0012)
-                .fraisParVersement(0.0)
+                .fraisParVersement(0.02)
                 .fraisGestionAnnuels(0.0)
                 .tauxTaxePlusValues(0.0)
                 .exoneration(new ExonerationPlusValues(10_000.0, 1_000.0, 5))
@@ -82,7 +82,7 @@ public final class ScenarioStatistiquesComplet {
 
         ParametresCT paramsCTavec = ParametresCT.builder()
                 .taxeOperationsBourse(0.0012)
-                .fraisParVersement(0.0)
+                .fraisParVersement(0.02)
                 .fraisGestionAnnuels(0.0)
                 .tauxTaxePlusValues(0.10)
                 .exoneration(new ExonerationPlusValues(10_000.0, 1_000.0, 5))
@@ -91,7 +91,7 @@ public final class ScenarioStatistiquesComplet {
         // ── Paramètres B23 EP et ELT (communs à tous les profils d'âge) ──────
         ParametresBranche23 paramsEP = ParametresBranche23.builder()
                 .taxeOperationsAssurance(0.0)
-                .fraisParPrime(0.0)
+                .fraisParPrime(0.02)
                 .fraisGestionAnnuels(0.0)
                 .tauxTaxeAnticipative(0.08)
                 .ageTaxeAnticipative(60)
@@ -102,7 +102,7 @@ public final class ScenarioStatistiquesComplet {
 
         ParametresBranche23 paramsELT = ParametresBranche23.builder()
                 .taxeOperationsAssurance(Constants.ELT_TAXE_ASSURANCE)
-                .fraisParPrime(0.0)
+                .fraisParPrime(0.02)
                 .fraisGestionAnnuels(0.0)
                 .tauxTaxeAnticipative(0.10)
                 .ageTaxeAnticipative(60)
