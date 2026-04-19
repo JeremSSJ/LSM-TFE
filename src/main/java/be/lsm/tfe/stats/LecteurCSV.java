@@ -10,14 +10,12 @@ import java.util.List;
  * Lit un fichier CSV généré par {@link ExportateurRapport} et retourne
  * la liste des lignes sous forme de {@link LigneRapportCSV}.
  *
- * <p>Format attendu (21 colonnes, séparateur ;) :
+ * <p>Format attendu (16 colonnes, séparateur ;) :
  * vehiculeA ; vehiculeB ; rendement_pct ; age_debut ; age_fin ;
  * taux_taxe_pv_pct ; versement_min ; versement_max ;
  * taux_dominance_A_pct ; taux_dominance_B_pct ;
  * nb_croisements ; premier_croisement_eur ;
- * avantage_moyen_A_eur ; avantage_moyen_B_eur ;
- * avantage_max_A_eur ; avantage_max_B_eur ;
- * aire_ecarts_eur ; dominant ;
+ * dominant ;
  * van_moy_capital_b23_eur ; van_moy_eco_fiscales_b23_eur ; van_moy_capital_ct_eur
  * </p>
  */
@@ -61,15 +59,10 @@ public final class LecteurCSV {
                 parseDouble(c[9]),      // tauxDominanceB
                 parseInt(c[10]),        // nbCroisements
                 parseDoubleOuNaN(c[11]),// premierCroisement
-                parseDouble(c[12]),     // avantMoyA
-                parseDouble(c[13]),     // avantMoyB
-                parseDouble(c[14]),     // avantMaxA
-                parseDouble(c[15]),     // avantMaxB
-                parseDouble(c[16]),     // aireEcarts
-                c[17].trim(),           // dominant
-                parseDouble(c[18]),     // vanMoyCapitalB23
-                parseDouble(c[19]),     // vanMoyEcoFiscalesB23
-                parseDouble(c[20])      // vanMoyCapitalCT
+                c[12].trim(),           // dominant
+                parseDouble(c[13]),     // vanMoyCapitalB23
+                parseDouble(c[14]),     // vanMoyEcoFiscalesB23
+                parseDouble(c[15])      // vanMoyCapitalCT
         );
     }
 

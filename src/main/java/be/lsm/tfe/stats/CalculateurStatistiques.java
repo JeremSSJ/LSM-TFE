@@ -5,7 +5,6 @@ import be.lsm.tfe.common.PointCroisement;
 import be.lsm.tfe.common.ResultatSimulation;
 
 import java.util.List;
-import java.util.OptionalDouble;
 import java.util.stream.IntStream;
 
 /**
@@ -60,26 +59,8 @@ public final class CalculateurStatistiques {
         double dernierCroisement = croisements.size() <= 1
                 ? Double.NaN : croisements.get(croisements.size() - 1).versementEuros();
 
-        // ── Avantages moyens ──────────────────────────────────────────────────
-        double moyenneADomine = IntStream.range(0, n)
-                .filter(i -> diffs[i] > 0).mapToDouble(i -> diffs[i])
-                .average().orElse(0.0);
-
-        double moyenneBDomine = IntStream.range(0, n)
-                .filter(i -> diffs[i] < 0).mapToDouble(i -> -diffs[i])
-                .average().orElse(0.0);
-
-        // ── Avantages maximaux ────────────────────────────────────────────────
-        double vanDiffMaxA     = maxPositif(diffs);
-        double versementAuMaxA = versementAuMax(resultatsA, diffs, true);
-        double vanDiffMaxB     = maxNegatif(diffs);
-        double versementAuMaxB = versementAuMax(resultatsA, diffs, false);
-
-        // ── Aire des écarts ───────────────────────────────────────────────────
+        // ── Aire des écarts (utilisée uniquement pour déterminer le dominant) ─
         double aire = IntStream.range(0, n).mapToDouble(i -> diffs[i]).sum();
-
-        // ── Écart au versement max ────────────────────────────────────────────
-        double diffAuMax = diffs[n - 1];
 
         // ── Dominant global ───────────────────────────────────────────────────
         String dominant;
@@ -87,18 +68,15 @@ public final class CalculateurStatistiques {
         else if (aire > 0)          dominant = nomA;
         else                        dominant = nomB;
 
-        // ── Nouvelles colonnes : VAN moyennes des 3 composantes ───────────────
-        // vanCapital(B23) = capital net après taxe anticipative, actualisé, hors éco. fiscales
+        // ── VAN moyennes des 3 composantes ───────────────────────────────────
         double vanMoyCapB23 = resultatsA.stream()
                 .mapToDouble(ResultatSimulation::vanCapital)
                 .average().orElse(0.0);
 
-        // vanEconomiesFiscales(B23) = VAN des réductions d'impôt actualisées
         double vanMoyEcoB23 = resultatsA.stream()
                 .mapToDouble(ResultatSimulation::vanEconomiesFiscales)
                 .average().orElse(0.0);
 
-        // vanTotale(CT) = vanCapital(CT) car vanEconomiesFiscales(CT) = 0 par construction
         double vanMoyCapCT = resultatsB.stream()
                 .mapToDouble(ResultatSimulation::vanTotale)
                 .average().orElse(0.0);
@@ -110,11 +88,7 @@ public final class CalculateurStatistiques {
                 tauxA, tauxB,
                 croisements,
                 premierCroisement, dernierCroisement,
-                moyenneADomine, moyenneBDomine,
-                vanDiffMaxA, versementAuMaxA,
-                vanDiffMaxB, versementAuMaxB,
-                aire, diffAuMax, dominant,
-                // 3 nouvelles colonnes
+                dominant,
                 vanMoyCapB23,
                 vanMoyEcoB23,
                 vanMoyCapCT
@@ -129,36 +103,5 @@ public final class CalculateurStatistiques {
         return IntStream.range(0, a.size())
                 .mapToDouble(i -> a.get(i).vanTotale() - b.get(i).vanTotale())
                 .toArray();
-    }
-
-    /** Retourne la plus grande valeur positive (avantage max de A). */
-    public static double maxPositif(double[] diffs) {
-        return IntStream.range(0, diffs.length).filter(i -> diffs[i] > 0)
-                .mapToDouble(i -> diffs[i]).max().orElse(0.0);
-    }
-
-    /** Retourne la valeur absolue du minimum négatif (avantage max de B). */
-    public static double maxNegatif(double[] diffs) {
-        return IntStream.range(0, diffs.length).filter(i -> diffs[i] < 0)
-                .mapToDouble(i -> -diffs[i]).max().orElse(0.0);
-    }
-
-    /** Retourne le versement au pic d'avantage de A (posMax=true) ou B (posMax=false). */
-    public static double versementAuMax(
-            List<ResultatSimulation> resultatsA, double[] diffs, boolean posMax) {
-
-        OptionalDouble max = posMax
-                ? IntStream.range(0, diffs.length).filter(i -> diffs[i] > 0)
-                           .mapToDouble(i -> diffs[i]).max()
-                : IntStream.range(0, diffs.length).filter(i -> diffs[i] < 0)
-                           .mapToDouble(i -> -diffs[i]).max();
-
-        if (max.isEmpty()) return Double.NaN;
-        double valMax = max.getAsDouble();
-
-        return IntStream.range(0, diffs.length)
-                .filter(i -> Math.abs((posMax ? diffs[i] : -diffs[i]) - valMax) < 1e-6)
-                .mapToDouble(i -> resultatsA.get(i).versementAnnuel())
-                .findFirst().orElse(Double.NaN);
     }
 }

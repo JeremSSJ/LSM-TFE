@@ -15,11 +15,6 @@ package be.lsm.tfe.stats;
  * @param tauxDominanceB         % de la plage où B domine
  * @param nbCroisements          Nombre de points de croisement détectés
  * @param premierCroisement      Versement au premier croisement (ou NaN)
- * @param avantMoyA              Avantage moyen de A quand il domine (€)
- * @param avantMoyB              Avantage moyen de B quand il domine (€)
- * @param avantMaxA              Avantage maximum de A sur B (€)
- * @param avantMaxB              Avantage maximum de B sur A (€)
- * @param aireEcarts             Intégrale des écarts VAN(A)-VAN(B) (€)
  * @param dominant               Instrument dominant global
  * @param vanMoyCapitalB23       VAN moyenne du capital B23 sur la plage (€)
  *                               = capital net après taxe anticipative, actualisé, hors éco. fiscales
@@ -41,13 +36,7 @@ public record LigneRapportCSV(
         double tauxDominanceB,
         int    nbCroisements,
         double premierCroisement,
-        double avantMoyA,
-        double avantMoyB,
-        double avantMaxA,
-        double avantMaxB,
-        double aireEcarts,
         String dominant,
-        // ── 3 nouvelles colonnes ──────────────────────────────────────────────
         double vanMoyCapitalB23,
         double vanMoyEcoFiscalesB23,
         double vanMoyCapitalCT
@@ -60,9 +49,7 @@ public record LigneRapportCSV(
                 "versement_min", "versement_max",
                 "taux_dominance_A_pct", "taux_dominance_B_pct",
                 "nb_croisements", "premier_croisement_eur",
-                "avantage_moyen_A_eur", "avantage_moyen_B_eur",
-                "avantage_max_A_eur", "avantage_max_B_eur",
-                "aire_ecarts_eur", "dominant",
+                "dominant",
                 "van_moy_capital_b23_eur",
                 "van_moy_eco_fiscales_b23_eur",
                 "van_moy_capital_ct_eur"
@@ -79,9 +66,6 @@ public record LigneRapportCSV(
                 fmt(tauxDominanceA), fmt(tauxDominanceB),
                 String.valueOf(nbCroisements),
                 Double.isNaN(premierCroisement) ? "NA" : fmt(premierCroisement),
-                fmt(avantMoyA), fmt(avantMoyB),
-                fmt(avantMaxA), fmt(avantMaxB),
-                fmt(aireEcarts),
                 dominant,
                 fmt(vanMoyCapitalB23),
                 fmt(vanMoyEcoFiscalesB23),
@@ -109,13 +93,7 @@ public record LigneRapportCSV(
                 stats.tauxDominanceA(), stats.tauxDominanceB(),
                 stats.croisements().size(),
                 stats.premierCroisement(),
-                stats.vanDiffMoyenneADomine(),
-                stats.vanDiffMoyenneBDomine(),
-                stats.vanDiffMaxA(),
-                stats.vanDiffMaxB(),
-                stats.aireEcartsAvsB(),
                 stats.instrumentDominantGlobal(),
-                // 3 nouvelles colonnes
                 stats.vanMoyenneCapitalB23(),
                 stats.vanMoyenneEcoFiscalesB23(),
                 stats.vanMoyenneCapitalCT()

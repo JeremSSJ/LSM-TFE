@@ -56,35 +56,6 @@ class CalculateurStatistiquesTest {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    @Nested
-    @DisplayName("maxPositif() / maxNegatif()")
-    class MaxPosNeg {
-
-        @Test
-        @DisplayName("A toujours supérieur : maxPositif = max des écarts, maxNegatif = 0")
-        void aToujors() {
-            double[] d = {1.0, 3.0, 2.0};
-            assertThat(CalculateurStatistiques.maxPositif(d)).isCloseTo(3.0, within(DELTA));
-            assertThat(CalculateurStatistiques.maxNegatif(d)).isCloseTo(0.0, within(DELTA));
-        }
-
-        @Test
-        @DisplayName("B toujours supérieur : maxPositif = 0, maxNegatif = abs(min)")
-        void bToujors() {
-            double[] d = {-1.0, -4.0, -2.0};
-            assertThat(CalculateurStatistiques.maxPositif(d)).isCloseTo(0.0, within(DELTA));
-            assertThat(CalculateurStatistiques.maxNegatif(d)).isCloseTo(4.0, within(DELTA));
-        }
-
-        @Test
-        @DisplayName("Mélange : maxPositif et maxNegatif corrects")
-        void melange() {
-            double[] d = {2.0, -5.0, 3.0, -1.0};
-            assertThat(CalculateurStatistiques.maxPositif(d)).isCloseTo(3.0, within(DELTA));
-            assertThat(CalculateurStatistiques.maxNegatif(d)).isCloseTo(5.0, within(DELTA));
-        }
-    }
 
     // ─────────────────────────────────────────────────────────────────────────
     @Nested
@@ -124,8 +95,6 @@ class CalculateurStatistiquesTest {
             var b = serieLineaire(0, 10, 3.0); // VAN(10) = 30
             var stats = CalculateurStatistiques.calculer(a, b, "A", "B");
 
-            // diff au max = 20 - 30 = -10 (B domine)
-            assertThat(stats.vanDiffAuVersementMax()).isCloseTo(-10.0, within(DELTA));
             assertThat(stats.instrumentDominantGlobal()).isEqualTo("B");
         }
 
@@ -150,8 +119,8 @@ class CalculateurStatistiquesTest {
             List<ResultatSimulation> b = List.of(
                     resultat(1, 1), resultat(2, 1), resultat(3, 3));
             var stats = CalculateurStatistiques.calculer(a, b, "A", "B");
-            assertThat(stats.vanDiffMoyenneADomine()).isCloseTo(2.0, within(DELTA));
-            assertThat(stats.vanDiffMoyenneBDomine()).isCloseTo(2.0, within(DELTA));
+            assertThat(stats.nbPointsADomine()).isEqualTo(2);
+            assertThat(stats.nbPointsBDomine()).isEqualTo(1);
         }
 
         @Test

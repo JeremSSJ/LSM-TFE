@@ -20,23 +20,10 @@ import be.lsm.tfe.common.PointCroisement;
  * @param croisements               Points de croisement interpolés
  * @param premierCroisement         Versement au premier croisement (NaN si aucun)
  * @param dernierCroisement         Versement au dernier croisement (NaN si <= 1)
- * @param vanDiffMoyenneADomine     VAN(A)-VAN(B) moyenne quand A domine (€)
- * @param vanDiffMoyenneBDomine     VAN(B)-VAN(A) moyenne quand B domine (€)
- * @param vanDiffMaxA               Avantage maximum de A sur B (€)
- * @param versementAuMaxA           Versement à l'avantage max de A (€/an)
- * @param vanDiffMaxB               Avantage maximum de B sur A (€)
- * @param versementAuMaxB           Versement à l'avantage max de B (€/an)
- * @param aireEcartsAvsB            Intégrale discrète de VAN(A)-VAN(B) sur la plage
- * @param vanDiffAuVersementMax     VAN(A)-VAN(B) au versement maximal de la plage (€)
  * @param instrumentDominantGlobal  "A", "B", ou "Aucun (ex æquo)" selon l'aire
  * @param vanMoyenneCapitalB23      Moyenne de vanCapital(A) sur toute la plage (€)
- *                                  = capital B23 net après taxe anticipative, actualisé,
- *                                    hors économies fiscales
  * @param vanMoyenneEcoFiscalesB23  Moyenne de vanEconomiesFiscales(A) sur toute la plage (€)
- *                                  = VAN des réductions d'impôt annuelles actualisées
  * @param vanMoyenneCapitalCT       Moyenne de vanTotale(B) sur toute la plage (€)
- *                                  = capital CT net après taxe PV, actualisé
- *                                    (vanEconomiesFiscales du CT est toujours 0)
  */
 public record StatistiquesComparaison(
         String                nomVehiculeA,
@@ -52,16 +39,7 @@ public record StatistiquesComparaison(
         List<PointCroisement> croisements,
         double                premierCroisement,
         double                dernierCroisement,
-        double                vanDiffMoyenneADomine,
-        double                vanDiffMoyenneBDomine,
-        double                vanDiffMaxA,
-        double                versementAuMaxA,
-        double                vanDiffMaxB,
-        double                versementAuMaxB,
-        double                aireEcartsAvsB,
-        double                vanDiffAuVersementMax,
         String                instrumentDominantGlobal,
-        // ── 3 nouvelles colonnes ──────────────────────────────────────────────
         double                vanMoyenneCapitalB23,
         double                vanMoyenneEcoFiscalesB23,
         double                vanMoyenneCapitalCT
