@@ -102,7 +102,7 @@ class ComparateurVehiculesTest {
                     stubSimulateur("A", 3.0), profil, rendement, 0, 100);
             List<ResultatSimulation> b = ComparateurVehicules.simulerPlage(
                     stubSimulateur("B", 1.0), profil, rendement, 0, 100);
-            assertThat(ComparateurVehicules.trouverCroisements(a, b, "A", "B")).isEmpty();
+            assertThat(ComparateurVehicules.trouverCroisements(a, b)).isEmpty();
         }
 
         @Test
@@ -112,7 +112,7 @@ class ComparateurVehiculesTest {
                     stubSimulateur("A", 1.0), profil, rendement, 0, 100);
             List<ResultatSimulation> b = ComparateurVehicules.simulerPlage(
                     stubSimulateur("B", 3.0), profil, rendement, 0, 100);
-            assertThat(ComparateurVehicules.trouverCroisements(a, b, "A", "B")).isEmpty();
+            assertThat(ComparateurVehicules.trouverCroisements(a, b)).isEmpty();
         }
 
         @Test
@@ -132,13 +132,11 @@ class ComparateurVehiculesTest {
                     simB, profil, rendement, 0, 1_000);
 
             List<PointCroisement> croisements = ComparateurVehicules.trouverCroisements(
-                    ra, rb, "A", "B");
+                    ra, rb);
 
             assertThat(croisements).hasSize(1);
             assertThat(croisements.get(0).versementEuros())
                     .isCloseTo(500.0, within(1.0));
-            assertThat(croisements.get(0).vehiculeAvantageuxApres())
-                    .isEqualTo("B");  // après 500€, B > A
         }
 
         @Test
@@ -148,7 +146,7 @@ class ComparateurVehiculesTest {
                     stubSimulateur("A", 1.0), profil, rendement, 0, 10);
             List<ResultatSimulation> b = ComparateurVehicules.simulerPlage(
                     stubSimulateur("B", 2.0), profil, rendement, 0, 20);
-            assertThatThrownBy(() -> ComparateurVehicules.trouverCroisements(a, b, "A", "B"))
+            assertThatThrownBy(() -> ComparateurVehicules.trouverCroisements(a, b))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 

@@ -24,9 +24,7 @@ public final class ComparateurVehicules {
 
     public static List<PointCroisement> trouverCroisements(
             List<ResultatSimulation> resultatsA,
-            List<ResultatSimulation> resultatsB,
-            String nomA,
-            String nomB) {
+            List<ResultatSimulation> resultatsB) {
 
         if (resultatsA.size() != resultatsB.size()) {
             throw new IllegalArgumentException(
@@ -40,7 +38,7 @@ public final class ComparateurVehicules {
                         diffVAN(resultatsA, resultatsB, i + 1)))
                 .filter(i -> Math.abs(resultatsA.get(i).vanTotale()) > 1e-6
                         || Math.abs(resultatsB.get(i).vanTotale()) > 1e-6)
-                .mapToObj(i -> interpolerCroisement(resultatsA, resultatsB, i, nomA, nomB))
+                .mapToObj(i -> interpolerCroisement(resultatsA, resultatsB, i))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
@@ -55,9 +53,7 @@ public final class ComparateurVehicules {
     private static PointCroisement interpolerCroisement(
             List<ResultatSimulation> a,
             List<ResultatSimulation> b,
-            int i,
-            String nomA,
-            String nomB) {
+            int i) {
 
         double v0 = a.get(i).versementAnnuel();
         double v1 = a.get(i + 1).versementAnnuel();
@@ -67,17 +63,6 @@ public final class ComparateurVehicules {
         // Interpolation linéaire : v* = v0 - d0 * (v1-v0) / (d1-d0)
         double vCroisement = v0 - d0 * (v1 - v0) / (d1 - d0);
 
-        double vanACrois = interpoler(a.get(i).vanTotale(), a.get(i + 1).vanTotale(), v0, v1, vCroisement);
-        double vanBCrois = interpoler(b.get(i).vanTotale(), b.get(i + 1).vanTotale(), v0, v1, vCroisement);
-
-        // Après le croisement, A est avantageux si d1 > 0 (A repasse au-dessus)
-        String avantageuxApres = d1 > 0 ? nomA : nomB;
-
-        return new PointCroisement(vCroisement, vanACrois, vanBCrois, avantageuxApres);
-    }
-
-    private static double interpoler(double y0, double y1, double x0, double x1, double x) {
-        if (x1 == x0) return y0;
-        return y0 + (y1 - y0) * (x - x0) / (x1 - x0);
+        return new PointCroisement(vCroisement);
     }
 }

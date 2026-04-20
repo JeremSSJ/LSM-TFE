@@ -135,7 +135,7 @@ class IntegrationEPvsCTTest {
                     simCT, profil, rendement, 0, 2_000);
 
             List<PointCroisement> croisements = ComparateurVehicules.trouverCroisements(
-                    resEP, resCT, "EP", "CT");
+                    resEP, resCT);
 
             croisements.forEach(c ->
                     assertThat(c.versementEuros())

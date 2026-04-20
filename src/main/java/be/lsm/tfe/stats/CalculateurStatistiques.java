@@ -52,7 +52,7 @@ public final class CalculateurStatistiques {
 
         // ── Croisements ───────────────────────────────────────────────────────
         List<PointCroisement> croisements = ComparateurVehicules.trouverCroisements(
-                resultatsA, resultatsB, nomA, nomB);
+                resultatsA, resultatsB);
 
         double premierCroisement = croisements.isEmpty()
                 ? Double.NaN : croisements.get(0).versementEuros();
