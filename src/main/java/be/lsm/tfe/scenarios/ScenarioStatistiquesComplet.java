@@ -52,9 +52,9 @@ public final class ScenarioStatistiquesComplet {
     private static final double RENDEMENT_PAS = 0.01;
 
     // Plages de versements
-    private static final int VERSEMENT_MIN_EP  = 0;
+    private static final int VERSEMENT_MIN_EP  = 1;
     private static final int VERSEMENT_MAX_EP  = 1_350;
-    private static final int VERSEMENT_MIN_ELT = 0;
+    private static final int VERSEMENT_MIN_ELT = 1;
     private static final int VERSEMENT_MAX_ELT = 2_450;
 
     // Chemins de sortie
