@@ -358,13 +358,16 @@ Indicateurs de dominance calculés sur la plage :
   • Taux d'égalité (%)      = 100 × nb(v où VAN_B23 = VAN_CT) / nb(v total)
 
 Dominant global :
-  Le dominant global est déterminé par l'aire algébrique sous la courbe des différences :
+  Le dominant global est déterminé en comparant les taux de dominance respectifs des
+  deux instruments sur l'ensemble de la plage de versements :
 
-    Aire = Σ [VAN_B23(v) − VAN_CT(v)]   pour v dans la plage
+    • Si tauxDominance_B23 > tauxDominance_CT  → Branche 23 est l'instrument dominant global
+    • Si tauxDominance_CT  > tauxDominance_B23  → Compte-Titres est l'instrument dominant global
+    • Si tauxDominance_B23 = tauxDominance_CT   → Ex æquo (aucun instrument ne domine l'autre)
 
-  • Aire > 1 €     → Branche 23 est l'instrument dominant global
-  • Aire < −1 €    → Compte-Titres est l'instrument dominant global
-  • |Aire| ≤ 1 €   → Ex æquo
+  Exemple d'interprétation : un taux de dominance B23 de 80 % signifie que, pour 80 %
+  des versements annuels testés dans la plage légale, la Branche 23 offre une VAN
+  supérieure à celle du Compte-Titres.
 
 
 ═══════════════════════════════════════════════════════════════════════════════════════
