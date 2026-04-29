@@ -75,7 +75,7 @@ public final class ScenarioStatistiquesComplet {
         ParametresCT paramsCTsans = ParametresCT.builder()
                 .taxeOperationsBourse(0.0012)
                 .fraisParVersement(0.02)
-                .fraisGestionAnnuels(0.0)
+                .fraisGestionAnnuels(0.02)
                 .tauxTaxePlusValues(0.0)
                 .exoneration(new ExonerationPlusValues(10_000.0, 1_000.0, 5))
                 .build();
@@ -83,7 +83,7 @@ public final class ScenarioStatistiquesComplet {
         ParametresCT paramsCTavec = ParametresCT.builder()
                 .taxeOperationsBourse(0.0012)
                 .fraisParVersement(0.02)
-                .fraisGestionAnnuels(0.0)
+                .fraisGestionAnnuels(0.02)
                 .tauxTaxePlusValues(0.10)
                 .exoneration(new ExonerationPlusValues(10_000.0, 1_000.0, 5))
                 .build();
@@ -92,7 +92,7 @@ public final class ScenarioStatistiquesComplet {
         ParametresBranche23 paramsEP = ParametresBranche23.builder()
                 .taxeOperationsAssurance(0.0)
                 .fraisParPrime(0.02)
-                .fraisGestionAnnuels(0.0)
+                .fraisGestionAnnuels(0.02)
                 .tauxTaxeAnticipative(0.08)
                 .ageTaxeAnticipative(60)
                 .dureeMinAvantAnticipativeSiSouscritTard(10)
@@ -103,7 +103,7 @@ public final class ScenarioStatistiquesComplet {
         ParametresBranche23 paramsELT = ParametresBranche23.builder()
                 .taxeOperationsAssurance(Constants.ELT_TAXE_ASSURANCE)
                 .fraisParPrime(0.02)
-                .fraisGestionAnnuels(0.0)
+                .fraisGestionAnnuels(0.02)
                 .tauxTaxeAnticipative(0.10)
                 .ageTaxeAnticipative(60)
                 .dureeMinAvantAnticipativeSiSouscritTard(10)
@@ -160,8 +160,7 @@ public final class ScenarioStatistiquesComplet {
                         simEP, profil, rendement, VERSEMENT_MIN_EP, VERSEMENT_MAX_EP);
 
                 // Simulations ELT
-                List<ResultatSimulation> resELT = ComparateurVehicules.simulerPlage(
-                        simELT, profil, rendement, VERSEMENT_MIN_ELT, VERSEMENT_MAX_ELT);
+                List<ResultatSimulation> resELT = ComparateurVehicules.simulerPlage(simELT, profil, rendement, VERSEMENT_MIN_ELT, VERSEMENT_MAX_ELT);
 
                 // Simulations CT (sur les deux plages pour correspondre à EP et ELT)
                 List<ResultatSimulation> resCTsanEP = ComparateurVehicules.simulerPlage(
