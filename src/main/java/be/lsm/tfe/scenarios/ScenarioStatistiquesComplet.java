@@ -74,16 +74,16 @@ public final class ScenarioStatistiquesComplet {
         // ── Paramètres CT (communs aux 4 scénarios) ───────────────────────────
         ParametresCT paramsCTsans = ParametresCT.builder()
                 .taxeOperationsBourse(0.0012)
-                .fraisParVersement(0.02)
-                .fraisGestionAnnuels(0.02)
+                .fraisParVersement(0.008)
+                .fraisGestionAnnuels(0.0012)
                 .tauxTaxePlusValues(0.0)
                 .exoneration(new ExonerationPlusValues(10_000.0, 1_000.0, 5))
                 .build();
 
         ParametresCT paramsCTavec = ParametresCT.builder()
                 .taxeOperationsBourse(0.0012)
-                .fraisParVersement(0.02)
-                .fraisGestionAnnuels(0.02)
+                .fraisParVersement(0.008)
+                .fraisGestionAnnuels(0.0012)
                 .tauxTaxePlusValues(0.10)
                 .exoneration(new ExonerationPlusValues(10_000.0, 1_000.0, 5))
                 .build();
@@ -92,7 +92,7 @@ public final class ScenarioStatistiquesComplet {
         ParametresBranche23 paramsEP = ParametresBranche23.builder()
                 .taxeOperationsAssurance(0.0)
                 .fraisParPrime(0.02)
-                .fraisGestionAnnuels(0.02)
+                .fraisGestionAnnuels(0.015)
                 .tauxTaxeAnticipative(0.08)
                 .ageTaxeAnticipative(60)
                 .dureeMinAvantAnticipativeSiSouscritTard(10)
@@ -103,7 +103,7 @@ public final class ScenarioStatistiquesComplet {
         ParametresBranche23 paramsELT = ParametresBranche23.builder()
                 .taxeOperationsAssurance(Constants.ELT_TAXE_ASSURANCE)
                 .fraisParPrime(0.02)
-                .fraisGestionAnnuels(0.02)
+                .fraisGestionAnnuels(0.015)
                 .tauxTaxeAnticipative(0.10)
                 .ageTaxeAnticipative(60)
                 .dureeMinAvantAnticipativeSiSouscritTard(10)
