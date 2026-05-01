@@ -155,7 +155,7 @@ public final class ScenarioStatistiquesCompletLast {
                  rend += RENDEMENT_PAS) {
 
                 double rendArrondi = Math.round(rend * 1000) / 1000.0;
-                ParametresRendement rendement = new ParametresRendement(rendArrondi, OLO);
+                ParametresRendement rendement = new ParametresRendement(rendArrondi);
 
                 // Simulations EP
                 List<ResultatSimulation> resEP = ComparateurVehicules.simulerPlage(

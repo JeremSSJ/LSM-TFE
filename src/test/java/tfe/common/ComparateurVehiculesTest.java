@@ -41,7 +41,7 @@ class ComparateurVehiculesTest {
     void setup() {
         profil    = new ProfilInvestisseur("T", "T", 1990, Constants.AGE_DEBUT_DEFAUT,
                 Constants.AGE_FIN_HORIZON);
-        rendement = new ParametresRendement(Constants.RENDEMENT_DEFAUT, Constants.OLO_TAUX_DEFAUT);
+        rendement = new ParametresRendement(Constants.RENDEMENT_DEFAUT);
     }
 
     // ─────────────────────────────────────────────────────────────────────────

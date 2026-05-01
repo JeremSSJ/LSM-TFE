@@ -29,7 +29,7 @@ class SimulateurCTTest {
 
         ResultatSimulation resultatSimulation = simulateurCT.simuler(pi,
                 500,
-                new ParametresRendement(0.1, 0.03));
+                new ParametresRendement(0.1));
 
         assertEquals(500, resultatSimulation.versementAnnuel());
         assertEquals(480_086.17, resultatSimulation.capitalFinal(), 1e-2);
@@ -383,7 +383,7 @@ class SimulateurCTTest {
                 .fraisGestionAnnuels(0.0)
                 .build());
 
-        ParametresRendement rendement = new ParametresRendement(0.07, 0.0);
+        ParametresRendement rendement = new ParametresRendement(0.07);
 
         assertEquals(107000, simulateur.capitaliserReserve(100000, rendement));
 

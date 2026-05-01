@@ -45,7 +45,7 @@ class IntegrationEPvsCTTest {
     @BeforeEach
     void setup() {
         profil    = new ProfilInvestisseur("Test", "User", 1980, 18, 64);
-        rendement = new ParametresRendement(0.07, 0.03);
+        rendement = new ParametresRendement(0.07);
     }
 
     // ─────────────────────────────────────────────────────────────────────────

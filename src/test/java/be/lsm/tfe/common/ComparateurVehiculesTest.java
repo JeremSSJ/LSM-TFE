@@ -21,7 +21,7 @@ class ComparateurVehiculesTest {
         ProfilInvestisseur profil = new ProfilInvestisseur(
                 "Investisseur", "Type", 2000, 23, 65);
 
-        ParametresRendement rendement = new ParametresRendement(0.07, 0.03);
+        ParametresRendement rendement = new ParametresRendement(0.07);
 
         ParametresBranche23 paramsELT = ParametresBranche23.builder()
                 .taxeOperationsAssurance(Constants.ELT_TAXE_ASSURANCE)

@@ -20,7 +20,7 @@ class SimulateurBranche23Test {
 
         double versementAnnuel = 500.0;
 
-        ParametresRendement rendement = new ParametresRendement(0.1, 0.03);
+        ParametresRendement rendement = new ParametresRendement(0.1);
 
         ParametresBranche23 paramsELT = ParametresBranche23.builder()
                 .taxeOperationsAssurance(0.02)
@@ -56,7 +56,7 @@ class SimulateurBranche23Test {
 
         double versementAnnuel = 500.0;
 
-        ParametresRendement rendement = new ParametresRendement(0.1, 0.03);
+        ParametresRendement rendement = new ParametresRendement(0.1);
 
         ParametresBranche23 paramsELT = ParametresBranche23.builder()
                 .taxeOperationsAssurance(0.02)
@@ -487,7 +487,7 @@ class SimulateurBranche23Test {
                 .build(),
                 "");
 
-        ParametresRendement rendement = new ParametresRendement(0.07, 0.0);
+        ParametresRendement rendement = new ParametresRendement(0.07);
 
         assertEquals(107000, simulateur.capitaliserReserve(100000, rendement));
 
