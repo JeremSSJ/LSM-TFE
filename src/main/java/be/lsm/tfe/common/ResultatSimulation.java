@@ -9,6 +9,7 @@ public record ResultatSimulation(
         double              vanCapital,
         double              vanEconomiesFiscales,
         double              vanTotale,
+        double              taxeCompteTitresTotale,
         List<ResultatAnnuel> resultatParAnnee
 ) {
     public ResultatSimulation {

@@ -36,6 +36,12 @@ public final class Constants {
 
     public static final int CT_EXONERATION_ANNEES_MAX_DEFAUT = 5;
 
+    public static final double TCT_SEUIL = 1_000_000.0;
+
+    public static final double TCT_TAUX = 0.0015;
+
+    public static final double TCT_TAUX_PLAFOND_DEPASSEMENT = 0.10;
+
     public static final double OLO_TAUX_DEFAUT = 0.03;
 
     public static final double RENDEMENT_DEFAUT = 0.07;

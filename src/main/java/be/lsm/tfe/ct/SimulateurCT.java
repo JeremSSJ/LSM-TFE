@@ -34,6 +34,7 @@ public final class SimulateurCT implements Simulateur {
         List<ResultatAnnuel> annees = new ArrayList<>();
         double reserve = 0.0;
         double miseDeBase = 0.0;
+        double taxeCompteTitresTotale = 0.0;
 
         for (int annee = profil.anneeDebutVersements();
              annee <= profil.anneeFinVersements();
@@ -49,10 +50,14 @@ public final class SimulateurCT implements Simulateur {
                 reserve = capitaliserReserve(reserve, rendement) + versementAnnuel;
             }
 
+            double taxeCompteTitresAnnuelle = calculerTaxeCompteTitres(reserve);
+            reserve -= taxeCompteTitresAnnuelle;
+            taxeCompteTitresTotale += taxeCompteTitresAnnuelle;
+
             annees.add(ResultatAnnuel.sansAnticipative(annee, age, reserve, versementAnnuel, 0.0));
         }
 
-        return new AccumulationResult(annees, reserve, miseDeBase);
+        return new AccumulationResult(annees, reserve, miseDeBase, taxeCompteTitresTotale);
     }
 
     public ResultatSimulation construireResultat(ProfilInvestisseur profil,
@@ -79,7 +84,20 @@ public final class SimulateurCT implements Simulateur {
                 vanTotale,
                 0.0,
                 vanTotale,
+                accumulation.taxeCompteTitresTotale(),
                 accumulation.annees());
+    }
+
+    public double calculerTaxeCompteTitres(double reserveFinAnneeAvantTaxe) {
+        if (reserveFinAnneeAvantTaxe <= Constants.TCT_SEUIL) {
+            return 0.0;
+        }
+
+        double taxeNormale = reserveFinAnneeAvantTaxe * Constants.TCT_TAUX;
+        double plafond = (reserveFinAnneeAvantTaxe - Constants.TCT_SEUIL)
+                * Constants.TCT_TAUX_PLAFOND_DEPASSEMENT;
+
+        return Math.min(taxeNormale, plafond);
     }
 
     public double capitaliserReserve(double reserve, ParametresRendement rendement) {
@@ -100,7 +118,8 @@ public final class SimulateurCT implements Simulateur {
     public record AccumulationResult(
             List<ResultatAnnuel> annees,
             double reserve,
-            double coutDeBase
+            double coutDeBase,
+            double taxeCompteTitresTotale
     ) {
     }
 }

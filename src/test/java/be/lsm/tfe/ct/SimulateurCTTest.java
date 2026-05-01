@@ -406,4 +406,15 @@ class SimulateurCTTest {
         assertEquals(150000, simulateur.calculerCapitalNet(150000, 150001, 50));
     }
 
+    @Test
+    void calculerTaxeCompteTitres() {
+        SimulateurCT simulateur = new SimulateurCT(ParametresCT.builder().build());
+
+        assertEquals(0.0, simulateur.calculerTaxeCompteTitres(999_999.99));
+        assertEquals(1_000.0, simulateur.calculerTaxeCompteTitres(1_010_000), 1e-6);
+        assertEquals(1500, simulateur.calculerTaxeCompteTitres(1_015_000), 1e-6);
+        assertEquals(1_522.842, simulateur.calculerTaxeCompteTitres(1_015_228.42), 1e-6);
+        assertEquals(1_800.0, simulateur.calculerTaxeCompteTitres(1_200_000), 1e-6);
+    }
+
 }

@@ -19,7 +19,7 @@ class CalculateurStatistiquesTest {
 
     /** Crée un ResultatSimulation avec seulement la vanTotale et versementAnnuel renseignés. */
     private static ResultatSimulation resultat(double versement, double van) {
-        return new ResultatSimulation(versement, van, van, van, 0.0, van, List.of());
+        return new ResultatSimulation(versement, van, van, van, 0.0, van, 0.0, List.of());
     }
 
     /** Crée une liste de résultats où VAN = coefficient × versement. */

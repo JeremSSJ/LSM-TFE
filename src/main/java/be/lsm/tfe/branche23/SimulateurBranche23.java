@@ -23,19 +23,26 @@ public final class SimulateurBranche23 implements Simulateur {
                                       double versementAnnuel,
                                       ParametresRendement rendement) {
 
-        List<ResultatAnnuel> annees = simulerAnnees(profil, versementAnnuel, rendement);
-        return construireResultat(profil, versementAnnuel, annees);
+        AccumulationResult accumulation = simulerAnneesAvecTaxeCompteTitres(profil, versementAnnuel, rendement);
+        return construireResultat(profil, versementAnnuel, accumulation.annees(), accumulation.taxeCompteTitresTotale());
     }
 
     public List<ResultatAnnuel> simulerAnnees(ProfilInvestisseur profil,
                                                double versementAnnuel,
                                                ParametresRendement rendement) {
+        return simulerAnneesAvecTaxeCompteTitres(profil, versementAnnuel, rendement).annees();
+    }
+
+    private AccumulationResult simulerAnneesAvecTaxeCompteTitres(ProfilInvestisseur profil,
+                                                                  double versementAnnuel,
+                                                                  ParametresRendement rendement) {
 
         int  anneeAnticipative = determinerAnneeAnticipative(profil);
         List<ResultatAnnuel> annees = new ArrayList<>();
 
         double  reserve      = 0.0;
         boolean taxeApplique = false;
+        double taxeCompteTitresTotale = 0.0;
 
         for (int annee = profil.anneeDebutVersements();
              annee <= profil.anneeFinVersements();
@@ -64,17 +71,22 @@ public final class SimulateurBranche23 implements Simulateur {
                 reserve = reserve + versementNet;
             }
 
+            double taxeCompteTitresAnnuelle = calculerTaxeCompteTitres(reserve);
+            reserve -= taxeCompteTitresAnnuelle;
+            taxeCompteTitresTotale += taxeCompteTitresAnnuelle;
+
             annees.add(anticipativeCetteAnnee
                     ? ResultatAnnuel.avecAnticipative(annee, age, reserve, versementNet, economie)
                     : ResultatAnnuel.sansAnticipative(annee, age, reserve, versementNet, economie));
         }
 
-        return annees;
+        return new AccumulationResult(annees, taxeCompteTitresTotale);
     }
 
     public ResultatSimulation construireResultat(ProfilInvestisseur profil,
-                                                  double versementAnnuel,
-                                                  List<ResultatAnnuel> annees) {
+                                                 double versementAnnuel,
+                                                 List<ResultatAnnuel> annees,
+                                                 double taxeCompteTitresTotale) {
 
         // Branche 23 : pas de taxe PV à la sortie → capitalFinal = capitalFinalNet
         double capitalFinalNet = annees.get(annees.size() - 1).reserveEnFinAnnee();
@@ -91,7 +103,20 @@ public final class SimulateurBranche23 implements Simulateur {
                 vanCap,
                 vanEco,
                 vanTot,
+                taxeCompteTitresTotale,
                 annees);
+    }
+
+    public double calculerTaxeCompteTitres(double reserveFinAnneeAvantTaxe) {
+        if (reserveFinAnneeAvantTaxe <= Constants.TCT_SEUIL) {
+            return 0.0;
+        }
+
+        double taxeNormale = reserveFinAnneeAvantTaxe * Constants.TCT_TAUX;
+        double plafond = (reserveFinAnneeAvantTaxe - Constants.TCT_SEUIL)
+                * Constants.TCT_TAUX_PLAFOND_DEPASSEMENT;
+
+        return Math.min(taxeNormale, plafond);
     }
 
     public double calculerVersementNet(double versementAnnuel) {
@@ -123,5 +148,8 @@ public final class SimulateurBranche23 implements Simulateur {
             return 0.0;
         }
         return params.regleReductionFiscale().calculer(versement);
+    }
+
+    private record AccumulationResult(List<ResultatAnnuel> annees, double taxeCompteTitresTotale) {
     }
 }

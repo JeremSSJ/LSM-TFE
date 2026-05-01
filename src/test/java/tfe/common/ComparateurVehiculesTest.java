@@ -27,7 +27,7 @@ class ComparateurVehiculesTest {
                                               double versementAnnuel,
                                               ParametresRendement r) {
                 double van = versementAnnuel * multiplicateur;
-                return new ResultatSimulation(versementAnnuel, van, van, van, 0.0, van, List.of());
+                return new ResultatSimulation(versementAnnuel, van, van, van, 0.0, van, 0.0,List.of());
             }
             @Override
             public String nomVehicule() { return nom; }
@@ -162,7 +162,7 @@ class ComparateurVehiculesTest {
                                                   double versementAnnuel,
                                                   ParametresRendement r) {
                     double van = fn.calculer(versementAnnuel);
-                    return new ResultatSimulation(versementAnnuel, van, van, van, 0.0, van, List.of());
+                    return new ResultatSimulation(versementAnnuel, van, van, van, 0.0, van, 0.0,List.of());
                 }
                 @Override
                 public String nomVehicule() { return "test"; }
