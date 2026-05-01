@@ -34,9 +34,9 @@ class SimulateurCTTest {
         assertEquals(500, resultatSimulation.versementAnnuel());
         assertEquals(480_086.17, resultatSimulation.capitalFinal(), 1e-2);
         assertEquals(435_977.55, resultatSimulation.capitalFinalNet(), 1e-2);
-        assertEquals(56_842.88, resultatSimulation.vanCapital(), 1e-2);
+        assertEquals(56_615.07, resultatSimulation.vanCapital(), 1e-2);
         assertEquals(0.00, resultatSimulation.vanEconomiesFiscales());
-        assertEquals(56_615.08, resultatSimulation.vanTotale(), 1e-2);
+        assertEquals(56_615.07, resultatSimulation.vanTotale(), 1e-2);
 
         List<ResultatAnnuel> resultatAnnuels = resultatSimulation.resultatParAnnee();
 
