@@ -54,7 +54,6 @@ class ComparateurVehiculesTest {
 
         List<PointCroisement> croisements = ComparateurVehicules.trouverCroisements(resELT, resCTavELT);
 
-        assertEquals(1, croisements.size());
-        assertEquals(105.14, croisements.get(0).versementEuros(), 1e-2);
+        assertEquals(0, croisements.size());
     }
 }

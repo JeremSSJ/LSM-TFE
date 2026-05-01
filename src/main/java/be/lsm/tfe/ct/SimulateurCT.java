@@ -24,7 +24,7 @@ public final class SimulateurCT implements Simulateur {
                                       ParametresRendement rendement) {
 
         AccumulationResult accumulation = simulerAnnees(profil, versementAnnuel, rendement);
-        return construireResultat(profil, versementAnnuel, rendement, accumulation);
+        return construireResultat(profil, versementAnnuel, accumulation);
     }
 
     public AccumulationResult simulerAnnees(ProfilInvestisseur profil,
@@ -57,19 +57,18 @@ public final class SimulateurCT implements Simulateur {
 
     public ResultatSimulation construireResultat(ProfilInvestisseur profil,
                                                  double versementAnnuel,
-                                                 ParametresRendement rendement,
                                                  AccumulationResult accumulation) {
 
         double capitalNet = calculerCapitalNet(accumulation.reserve(),
                 accumulation.coutDeBase(),
                 profil.dureeAnnees());
 
-        double vanCap = CalculateurVAN.vanCapital(capitalNet, rendement.tauxOLO(), profil.dureeAnnees());
+        double vanCap = CalculateurVAN.vanCapital(capitalNet, profil.dureeAnnees());
 
         double coutTOBParAn = versementAnnuel * params.taxeOperationsBourse();
         double coutFraisParAn = versementAnnuel * params.fraisParVersement();
-        double vanTOB = CalculateurVAN.vanCoutsAnnuels(coutTOBParAn, rendement.tauxOLO(), profil.dureeAnnees());
-        double vanFrais = CalculateurVAN.vanCoutsAnnuels(coutFraisParAn, rendement.tauxOLO(), profil.dureeAnnees());
+        double vanTOB = CalculateurVAN.vanCoutsAnnuels(coutTOBParAn, profil.dureeAnnees());
+        double vanFrais = CalculateurVAN.vanCoutsAnnuels(coutFraisParAn, profil.dureeAnnees());
 
         double vanTotale = vanCap - vanTOB - vanFrais;
 
@@ -77,7 +76,7 @@ public final class SimulateurCT implements Simulateur {
                 versementAnnuel,
                 accumulation.reserve(),
                 capitalNet,
-                vanTotale,
+                vanCap,
                 0.0,
                 vanTotale,
                 accumulation.annees());

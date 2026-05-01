@@ -24,7 +24,7 @@ public final class SimulateurBranche23 implements Simulateur {
                                       ParametresRendement rendement) {
 
         List<ResultatAnnuel> annees = simulerAnnees(profil, versementAnnuel, rendement);
-        return construireResultat(profil, versementAnnuel, rendement, annees);
+        return construireResultat(profil, versementAnnuel, annees);
     }
 
     public List<ResultatAnnuel> simulerAnnees(ProfilInvestisseur profil,
@@ -74,15 +74,14 @@ public final class SimulateurBranche23 implements Simulateur {
 
     public ResultatSimulation construireResultat(ProfilInvestisseur profil,
                                                   double versementAnnuel,
-                                                  ParametresRendement rendement,
                                                   List<ResultatAnnuel> annees) {
 
         // Branche 23 : pas de taxe PV à la sortie → capitalFinal = capitalFinalNet
         double capitalFinalNet = annees.get(annees.size() - 1).reserveEnFinAnnee();
         int    duree           = profil.dureeAnnees();
 
-        double vanCap = CalculateurVAN.vanCapital(capitalFinalNet, rendement.tauxOLO(), duree);
-        double vanEco = CalculateurVAN.vanEconomiesFiscales(annees, rendement.tauxOLO());
+        double vanCap = CalculateurVAN.vanCapital(capitalFinalNet, duree);
+        double vanEco = CalculateurVAN.vanEconomiesFiscales(annees);
         double vanTot = vanCap + vanEco;
 
         return new ResultatSimulation(

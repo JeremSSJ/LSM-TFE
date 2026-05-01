@@ -40,9 +40,9 @@ class SimulateurBranche23Test {
         assertEquals(500, resultatSimulation.versementAnnuel());
         assertEquals(415_337.78, resultatSimulation.capitalFinal(), 1e-2);
         assertEquals(415_337.78, resultatSimulation.capitalFinalNet(), 1e-2);
-        assertEquals(103_526.58, resultatSimulation.vanCapital(), 1e-2);
-        assertEquals(3_790.01, resultatSimulation.vanEconomiesFiscales(), 1e-2);
-        assertEquals(107_316.59, resultatSimulation.vanTotale(), 1e-2);
+        assertEquals(54_151.86, resultatSimulation.vanCapital(), 1e-2);
+        assertEquals(3_092.35, resultatSimulation.vanEconomiesFiscales(), 1e-2);
+        assertEquals(57_244.21, resultatSimulation.vanTotale(), 1e-2);
     }
 
     @Test

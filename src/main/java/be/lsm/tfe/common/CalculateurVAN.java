@@ -5,28 +5,36 @@ import java.util.stream.IntStream;
 
 public final class CalculateurVAN {
 
-    public static double vanCapital(double capitalFinalNet, double tauxOLO, int dureeAnnees) {
-        return actualiser(capitalFinalNet, tauxOLO, dureeAnnees);
+    private CalculateurVAN() {
     }
 
-    public static double vanEconomiesFiscales(List<ResultatAnnuel> resultatsAnnuels, double tauxOLO) {
+    public static double vanCapital(double capitalFinalNet, int dureeAnnees) {
+        return actualiser(capitalFinalNet, dureeAnnees);
+    }
+
+    public static double vanEconomiesFiscales(List<ResultatAnnuel> resultatsAnnuels) {
         return IntStream.range(0, resultatsAnnuels.size())
                 .mapToDouble(t -> {
                     double economie = resultatsAnnuels.get(t).economiesFiscales();
                     // encaissée en t+1 → facteur d'actualisation (t+1)
-                    return actualiser(economie, tauxOLO, t + 1);
+                    return actualiser(economie, t + 1);
                 })
                 .sum();
     }
 
-    public static double vanCoutsAnnuels(double coutAnnuel, double tauxOLO, int dureeAnnees) {
+    public static double vanCoutsAnnuels(double coutAnnuel, int dureeAnnees) {
         return IntStream.rangeClosed(0, dureeAnnees)
-                .mapToDouble(t -> actualiser(coutAnnuel, tauxOLO, t))
+                .mapToDouble(t -> actualiser(coutAnnuel, t))
                 .sum();
     }
 
-    public static double actualiser(double montant, double tauxOLO, int annee) {
+    public static double actualiser(double montant, int annee) {
         if (annee < 0) throw new IllegalArgumentException("L'année ne peut être négative : " + annee);
+        if (annee == 0) {
+            return montant;
+        }
+
+        double tauxOLO = oloReferential.tauxPourDuree(annee);
         return montant / Math.pow(1.0 + tauxOLO, annee);
     }
 }

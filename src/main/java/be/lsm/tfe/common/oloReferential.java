@@ -2,8 +2,11 @@ package be.lsm.tfe.common;
 
 import java.util.Map;
 
-public class oloReferential {
-    Map<Integer, Double> oloMapReferential = Map.ofEntries(
+public final class oloReferential {
+
+    private static final int DUREE_MAX_REFERENTIEL = 30;
+
+    private static final Map<Integer, Double> OLO_MAP_REFERENTIAL = Map.ofEntries(
             Map.entry(1, 2.62),
             Map.entry(2, 2.72),
             Map.entry(3, 2.83),
@@ -35,4 +38,19 @@ public class oloReferential {
             Map.entry(29, 4.43),
             Map.entry(30, 4.43)
     );
+
+    private oloReferential() {
+    }
+
+    public static double tauxPourDuree(int dureeAnnees) {
+        if (dureeAnnees < 0) {
+            throw new IllegalArgumentException("La durée ne peut être négative : " + dureeAnnees);
+        }
+        if (dureeAnnees == 0) {
+            return 0.0;
+        }
+
+        int dureeReference = Math.min(dureeAnnees, DUREE_MAX_REFERENTIEL);
+        return OLO_MAP_REFERENTIAL.get(dureeReference) / 100.0;
+    }
 }
