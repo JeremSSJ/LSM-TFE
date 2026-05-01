@@ -76,7 +76,7 @@ public final class SimulateurCT implements Simulateur {
                 versementAnnuel,
                 accumulation.reserve(),
                 capitalNet,
-                vanCap,
+                vanTotale,
                 0.0,
                 vanTotale,
                 accumulation.annees());
