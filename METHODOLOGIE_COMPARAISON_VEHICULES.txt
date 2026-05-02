@@ -99,8 +99,14 @@ Règle particulière pour la Branche 23 :
 La comparaison entre les deux instruments repose exclusivement sur leur VAN totale,
 définie comme la somme actualisée de tous les flux nets de l'investisseur.
 
-Le taux d'actualisation retenu est le taux OLO (Obligations Linéaires) à 10 ans, fixé
-à 3 % dans les scénarios, représentant le coût d'opportunité sans risque de l'investisseur.
+L'actualisation repose sur un référentiel OLO dépendant de la durée (1 à 30 ans),
+avec une correspondance directe année → taux. Pour toute durée supérieure à 30 ans,
+le taux de la 30e année est réutilisé.
+
+Notations :
+  - r(n) = taux OLO correspondant à la durée n (via le référentiel)
+  - r(n) = r(30) si n > 30
+  - VA(m, n) = m / (1 + r(n))^n
 
 4.1 VAN d'un instrument de la Branche 23
 ─────────────────────────────────────────
@@ -112,14 +118,15 @@ La VAN B23 est décomposée en deux composantes :
     Valeur actuelle du capital net accumulé à l'échéance (après déduction de la taxe
     anticipative), actualisé sur toute la durée de l'investissement.
 
-        VAN_Capital = CapitalFinalNet / (1 + tauxOLO)^durée
+        VAN_Capital = VA(CapitalFinalNet, durée)
 
   • VAN_EconomiesFiscales_B23 :
     Somme actualisée des réductions d'impôt annuelles obtenues grâce à la déduction
-    fiscale. Chaque économie fiscale encaissée à l'année t est actualisée au facteur
-    (1 + tauxOLO)^(t+1) car elle est perçue l'année suivante (remboursement d'impôt).
+    fiscale. Chaque économie fiscale encaissée à l'année t est actualisée avec le taux
+    OLO correspondant à la maturité (t+1), car elle est perçue l'année suivante
+    (remboursement d'impôt).
 
-        VAN_Eco = Σ [EconomieFiscale(t) / (1 + tauxOLO)^(t+1)]  pour t = 0 à N-1
+        VAN_Eco = Σ [VA(EconomieFiscale(t), t+1)]  pour t = 0 à N-1
 
 4.2 VAN d'un Compte-Titres
 ──────────────────────────
@@ -132,8 +139,9 @@ La VAN du CT intègre le capital net et les coûts récurrents :
     plus-values, actualisé sur la durée.
 
   • VAN_TOB (Taxe sur les Opérations de Bourse) :
-    Actualisée comme une rente annuelle sur toute la durée :
-        VAN_TOB = Σ [versement × tauxTOB / (1 + tauxOLO)^t]  pour t = 0 à N
+    Actualisée comme une rente annuelle sur toute la durée, avec le taux OLO de
+    maturité t pour chaque terme :
+        VAN_TOB = Σ [VA(versement × tauxTOB, t)]  pour t = 0 à N
 
   • VAN_FraisParVersement :
     Calculée de la même façon que la VAN_TOB.
@@ -158,6 +166,9 @@ Pour chaque versement annuel v de la plage testée, on calcule la différence :
 Les quatre scénarios résultent du croisement de deux dimensions :
   • Le type de déduction fiscale appliquée à la Branche 23 : EP ou ELT
   • Le régime fiscal appliqué au Compte-Titres : sans ou avec taxe sur les plus-values
+
+En complément, la taxe sur les comptes-titres (TCT) est appliquée de manière
+transversale dans la simulation dès que la réserve annuelle dépasse le seuil légal.
 
 ┌──────┬─────────────────────────────────┬───────────────────────────────────┐
 │  N°  │  Véhicule A (Branche 23)        │  Véhicule B (Compte-Titres)       │
@@ -194,22 +205,28 @@ SCÉNARIO 4 — ELT B23 vs CT avec taxe PV 10 %
 6. PARAMÈTRES COMMUNS À TOUS LES SCÉNARIOS
 ═══════════════════════════════════════════════════════════════════════════════════════
 
-  Paramètre                          Valeur
+  Paramètre                          Valeur (configuration actuelle)
   ─────────────────────────────────────────────────────────────────
   Âge de fin de l'horizon            65 ans
   Âge de début (plage simulée)       18 à 55 ans (pas de 1 an)
   Année de naissance (référence)     2008
-  Taux OLO (actualisation)           3 %
+  Actualisation OLO                  Référentiel par durée (1..30 ans),
+                                     puis taux 30 ans au-delà
   Rendement annuel brut (plage)      3 % à 10 % (pas de 1 %)
-  Frais par versement / prime        2 % (CT et B23)
-  Frais de gestion annuels           0 % (les deux véhicules)
+  TOB CT                             0,12 % par versement
+  Frais par versement CT             0,80 %
+  Frais par prime B23                2,00 %
+  Frais de gestion annuels CT        0,12 %
+  Frais de gestion annuels B23       1,50 %
   Exonération PV de base (CT)        10 000 €
   Exonération PV annuelle (CT)       1 000 € par année de contrat
   Durée maximale de cumul exo.       5 ans (exonération max. = 15 000 €)
+  Seuil TCT                          1 000 000 €
+  Taux TCT                           0,15 %
+  Plafond TCT                        10 % du dépassement du seuil
 
-Note sur les frais de gestion : ils sont fixés à 0 % pour isoler l'effet fiscal pur.
-En pratique, les fonds Branche 23 ont des frais de gestion internes (TER) qui viendraient
-dégrader leur performance, mais ceux-ci ne sont pas l'objet de ce travail.
+Note : certains scénarios d'exploration peuvent utiliser des paramètres de frais
+différents, mais la structure de calcul reste identique.
 
 
 ═══════════════════════════════════════════════════════════════════════════════════════
@@ -238,16 +255,33 @@ Le capital net tient compte de la taxe éventuelle sur les plus-values :
   taxePV           = plusValueTaxable × tauxTaxePV    (0 % ou 10 % selon le scénario)
   capitalNet       = Réserve_finale − taxePV
 
+Important : dans l'implémentation actuelle, la réserve finale est déjà nette de TCT
+annuelles prélevées pendant la phase d'accumulation.
+
 Note méthodologique : le prix de revient est calculé par la méthode du coût total
 (équivalente à FIFO quand toutes les parts sont vendues simultanément à l'échéance).
 
 7.3 Coûts récurrents modélisés
 ───────────────────────────────
   • Taxe sur les Opérations de Bourse (TOB) : 0,12 % par versement annuel
-  • Frais de courtage par versement         : 2,00 % par versement annuel
+  • Frais de courtage par versement         : 0,80 % par versement annuel
 
 Ces coûts sont intégrés dans la VAN via une rente annuelle actualisée (et non déduits
 du capital, afin de conserver une cohérence avec la structure de la VAN B23).
+
+7.4 Taxe annuelle sur les comptes-titres (TCT)
+───────────────────────────────────────────────
+La TCT est calculée chaque année sur la réserve de fin d'année avant prélèvement.
+
+  Si Réserve_fin ≤ 1 000 000 € :
+      TCT = 0
+
+  Si Réserve_fin > 1 000 000 € :
+      taxeNormale = Réserve_fin × 0,15 %
+      plafond     = (Réserve_fin − 1 000 000) × 10 %
+      TCT         = min(taxeNormale, plafond)
+
+La TCT annuelle est ensuite déduite de la réserve et cumulée sur l'horizon.
 
 
 ═══════════════════════════════════════════════════════════════════════════════════════
@@ -298,10 +332,11 @@ Règle pour les souscriptions tardives (après 55 ans) :
   Si l'investisseur commence après 55 ans, la taxe anticipative n'est perçue qu'après
   10 ans de contrat (et non obligatoirement à 60 ans), conformément à la réglementation.
 
-8.5 Pas de taxe à la sortie
+8.5 Pas de taxe à la sortie (hors TCT annuelle)
 ────────────────────────────
 Contrairement au CT, la Branche 23 ne supporte aucune taxe supplémentaire à l'échéance.
-Le capital final net est directement le solde de la réserve après taxe anticipative.
+Le capital final net est directement le solde de la réserve après taxe anticipative,
+et après éventuelles TCT annuelles si le seuil est dépassé durant la phase d'accumulation.
 
 
 ═══════════════════════════════════════════════════════════════════════════════════════
@@ -339,6 +374,12 @@ L'ELT reprend la même structure de simulation que l'EP, avec les différences s
 ───────────────────────────────────────
   La capitalisation suit la même formule qu'en section 8.3.
   La taxe anticipative de 10 % est appliquée dans les mêmes conditions qu'en 8.4.
+
+9.5 TCT annuelle dans le modèle
+────────────────────────────────
+Comme pour l'EP et le CT, une TCT annuelle est appliquée dans l'implémentation
+actuelle lorsque la réserve de fin d'année dépasse 1 000 000 €, selon la même
+règle de taux/plafond décrite en section 7.4.
 
 
 ═══════════════════════════════════════════════════════════════════════════════════════
@@ -425,6 +466,12 @@ Pour chaque combinaison (ageDebut, rendement), une ligne CSV est produite conten
   van_moy_eco_fiscales_b23_eur VAN moyenne des économies fiscales B23 (€)
   van_moy_capital_ct_eur       VAN moyenne du capital CT net sur la plage (€)
 
+Indicateurs internes supplémentaires (niveau simulation unitaire) :
+  • taxeCompteTitresTotale : cumul des TCT annuelles sur toute la durée.
+
+Remarque : à ce stade, ce cumul TCT n'est pas encore exporté comme colonne dédiée
+dans le CSV agrégé des statistiques.
+
 Quatre fichiers CSV sont générés, un par scénario :
   1. ep_vs_ct_sans_taxe_pv.csv
   2. ep_vs_ct_avec_taxe_pv.csv
@@ -475,10 +522,10 @@ Les hypothèses suivantes constituent des simplifications par rapport à la réa
      Les versements annuels sont supposés identiques chaque année. L'inflation et
      l'évolution du revenu de l'investisseur ne sont pas modélisés.
 
-  c) FRAIS DE GESTION NULS
-     Les frais de gestion annuels (TER des fonds) sont fixés à 0 % pour les deux
-     instruments. En pratique, les fonds Branche 23 ont des coûts internes plus
-     élevés que les ETF passifs.
+  c) FRAIS CONSTANTS PAR SCÉNARIO
+     Les frais (versement, prime, gestion) sont constants dans un scénario donné
+     et ne varient pas dans le temps. Les variations de tarification réelles ne
+     sont pas modélisées.
 
   d) FISCALITÉ FIGÉE
      La réglementation fiscale est celle en vigueur au moment de la rédaction. Tout
@@ -488,7 +535,7 @@ Les hypothèses suivantes constituent des simplifications par rapport à la réa
   e) COMPARAISON EN VAN ET NON EN CAPITAL BRUT
      Le critère de comparaison est la VAN et non le capital accumulé. Ce choix permet
      de tenir compte du moment où les flux sont perçus (économies fiscales annuelles
-     vs capital à terme), mais il dépend du taux d'actualisation retenu (OLO 3 %).
+     vs capital à terme), mais il dépend de la courbe d'actualisation OLO retenue.
 
   f) ABSENCE DE RISQUE DE CONTREPARTIE
      Les deux instruments sont supposés sans risque de défaut ou de faillite de
@@ -502,6 +549,11 @@ Les hypothèses suivantes constituent des simplifications par rapport à la réa
      L'exonération des plus-values pour le CT est calculée de manière forfaitaire
      (montant de base + cumul annuel plafonné), ce qui est une approximation du
      régime réel.
+
+  i) ASSIETTE TCT APPROCHÉE
+     La TCT est évaluée sur la réserve de fin d'année avant prélèvement, ce qui
+     constitue une approximation par rapport à un calcul fondé sur des moyennes
+     infra-annuelles plus fines.
 
 ═══════════════════════════════════════════════════════════════════════════════════════
 FIN DU DOCUMENT
