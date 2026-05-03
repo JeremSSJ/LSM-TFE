@@ -108,6 +108,59 @@ Notations :
   - r(n) = r(30) si n > 30
   - VA(m, n) = m / (1 + r(n))^n
 
+4.0 Référentiel OLO utilisé (code)
+──────────────────────────────────
+Les taux d'actualisation utilisés sont ceux de `oloReferential`, définis pour les
+durées 1 à 30 ans.
+
+Le code applique un facteur 0,7 à chaque taux OLO brut :
+
+  taux_net = taux_brut × 0,7
+
+Interprétation économique : le facteur 0,7 traduit un rendement net attendu pour un
+investisseur belge après précompte mobilier de 30 % sur le rendement des OLO.
+
+Formellement :
+
+  taux_net = taux_brut × (1 − 30 %) = taux_brut × 0,7
+
+Table des taux du référentiel (brut → net utilisé pour l'actualisation) :
+
+  Année   OLO brut (%)   OLO net utilisé (%)
+  ------------------------------------------
+    1       2,62           1,834
+    2       2,72           1,904
+    3       2,83           1,981
+    4       2,95           2,065
+    5       3,06           2,142
+    6       3,17           2,219
+    7       3,27           2,289
+    8       3,39           2,373
+    9       3,51           2,457
+   10       3,63           2,541
+   11       3,73           2,611
+   12       3,81           2,667
+   13       3,87           2,709
+   14       3,93           2,751
+   15       3,98           2,786
+   16       4,03           2,821
+   17       4,08           2,856
+   18       4,13           2,891
+   19       4,17           2,919
+   20       4,21           2,947
+   21       4,25           2,975
+   22       4,29           3,003
+   23       4,32           3,024
+   24       4,35           3,045
+   25       4,37           3,059
+   26       4,39           3,073
+   27       4,41           3,087
+   28       4,42           3,094
+   29       4,43           3,101
+   30       4,43           3,101
+
+Pour une durée > 30 ans, le modèle applique le taux net de l'année 30.
+
 4.1 VAN d'un instrument de la Branche 23
 ─────────────────────────────────────────
 La VAN B23 est décomposée en deux composantes :
@@ -127,6 +180,14 @@ La VAN B23 est décomposée en deux composantes :
     (remboursement d'impôt).
 
         VAN_Eco = Σ [VA(EconomieFiscale(t), t+1)]  pour t = 0 à N-1
+
+Usage opérationnel des taux par maturité dans le code :
+  - VAN du capital final : application de r(durée)
+  - VAN des économies fiscales de l'année t : application de r(t+1)
+  - VAN des coûts annuels (TOB, frais) à l'année t : application de r(t)
+
+Autrement dit, chaque flux est actualisé avec le taux correspondant à son horizon
+propre, et non avec un taux unique fixe.
 
 4.2 VAN d'un Compte-Titres
 ──────────────────────────

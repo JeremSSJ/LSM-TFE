@@ -44,14 +44,12 @@ public final class SimulateurCT implements Simulateur {
 
             miseDeBase += versementAnnuel;
 
-            if (age == profil.ageDebut()) {
-                reserve = versementAnnuel;
-            } else {
-                reserve = capitaliserReserve(reserve, rendement) + versementAnnuel;
-            }
+            double reserveAvantVersement = age == profil.ageDebut()
+                    ? 0.0
+                    : capitaliserReserve(reserve, rendement);
 
-            double taxeCompteTitresAnnuelle = calculerTaxeCompteTitres(reserve);
-            reserve -= taxeCompteTitresAnnuelle;
+            double taxeCompteTitresAnnuelle = calculerTaxeCompteTitres(reserveAvantVersement);
+            reserve = reserveAvantVersement - taxeCompteTitresAnnuelle + versementAnnuel;
             taxeCompteTitresTotale += taxeCompteTitresAnnuelle;
 
             annees.add(ResultatAnnuel.sansAnticipative(annee, age, reserve, versementAnnuel, 0.0));

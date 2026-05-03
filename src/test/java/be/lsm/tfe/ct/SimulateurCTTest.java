@@ -417,4 +417,21 @@ class SimulateurCTTest {
         assertEquals(1_800.0, simulateur.calculerTaxeCompteTitres(1_200_000), 1e-6);
     }
 
+    @Test
+    void simulerAnneesAjouteVersementApresTct() {
+        SimulateurCT simulateur = new SimulateurCT(ParametresCT.builder()
+                .fraisGestionAnnuels(0.0)
+                .build());
+
+        ProfilInvestisseur profil = new ProfilInvestisseur("A", "B", 2000, 18, 19);
+        SimulateurCT.AccumulationResult accumulation = simulateur.simulerAnnees(profil,
+                1_000_001.0,
+                new ParametresRendement(0.0));
+
+        assertEquals(0.1, accumulation.taxeCompteTitresTotale(), 1e-9);
+        assertEquals(2_000_001.9, accumulation.reserve(), 1e-6);
+        assertEquals(1_000_001.0, accumulation.annees().get(0).reserveEnFinAnnee(), 1e-6);
+        assertEquals(2_000_001.9, accumulation.annees().get(1).reserveEnFinAnnee(), 1e-6);
+    }
+
 }
