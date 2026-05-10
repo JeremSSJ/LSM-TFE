@@ -24,7 +24,11 @@ public final class SimulateurBranche23 implements Simulateur {
                                       ParametresRendement rendement) {
 
         AccumulationResult accumulation = simulerAnneesAvecTaxeCompteTitres(profil, versementAnnuel, rendement);
-        return construireResultat(profil, versementAnnuel, accumulation.annees(), accumulation.taxeCompteTitresTotale());
+        return construireResultat(profil,
+                versementAnnuel,
+                rendement,
+                accumulation.annees(),
+                accumulation.taxeCompteTitresTotale());
     }
 
     public List<ResultatAnnuel> simulerAnnees(ProfilInvestisseur profil,
@@ -77,6 +81,7 @@ public final class SimulateurBranche23 implements Simulateur {
 
     public ResultatSimulation construireResultat(ProfilInvestisseur profil,
                                                  double versementAnnuel,
+                                                 ParametresRendement rendement,
                                                  List<ResultatAnnuel> annees,
                                                  double taxeCompteTitresTotale) {
 
@@ -84,7 +89,7 @@ public final class SimulateurBranche23 implements Simulateur {
         double capitalFinalNet = annees.get(annees.size() - 1).reserveEnFinAnnee();
         int    duree           = profil.dureeAnnees();
 
-        double vanCap = CalculateurVAN.vanCapital(capitalFinalNet, duree);
+        double vanCap = CalculateurVAN.vanCapital(capitalFinalNet, duree, rendement.rendementAnnuel());
         double vanEco = CalculateurVAN.vanEconomiesFiscales(annees);
         double vanTot = vanCap + vanEco;
 

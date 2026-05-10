@@ -12,6 +12,10 @@ public final class CalculateurVAN {
         return actualiser(capitalFinalNet, dureeAnnees);
     }
 
+    public static double vanCapital(double capitalFinalNet, int dureeAnnees, double tauxActualisation) {
+        return actualiser(capitalFinalNet, dureeAnnees, tauxActualisation);
+    }
+
     public static double vanEconomiesFiscales(List<ResultatAnnuel> resultatsAnnuels) {
         return IntStream.range(0, resultatsAnnuels.size())
                 .mapToDouble(t -> {
@@ -35,6 +39,15 @@ public final class CalculateurVAN {
         }
 
         double tauxOLO = oloReferential.tauxPourDuree(annee);
-        return montant / Math.pow(1.0 + tauxOLO, annee);
+        return actualiser(montant, annee, tauxOLO);
+    }
+
+    private static double actualiser(double montant, int annee, double tauxActualisation) {
+        if (annee < 0) throw new IllegalArgumentException("L'année ne peut être négative : " + annee);
+        if (annee == 0) {
+            return montant;
+        }
+
+        return montant / Math.pow(1.0 + tauxActualisation, annee);
     }
 }
