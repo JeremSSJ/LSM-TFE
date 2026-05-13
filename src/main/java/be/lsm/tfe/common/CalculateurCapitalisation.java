@@ -19,8 +19,7 @@ public final class CalculateurCapitalisation {
      * Capitalise les économies fiscales annuelles de la Branche 23 vers l'échéance.
      *
      * <p>L'économie de l'index {@code t} (reçue en fin d'année {@code t+1}) est
-     * capitalisée sur {@code dureeTotal - (t+1)} années au taux OLO net correspondant
-     * à la durée totale.</p>
+     * capitalisée sur {@code dureeTotal - (t+1)} années.</p>
      *
      * @param annees     Résultats annuels contenant les économies fiscales
      * @param dureeTotal Durée totale de l'investissement (en années)
@@ -30,8 +29,8 @@ public final class CalculateurCapitalisation {
         return IntStream.range(0, annees.size())
                 .mapToDouble(t -> {
                     double economie = annees.get(t).economiesFiscales();
-                    int anneesRestantes = dureeTotal - (t + 1);
-                    // anneesRestantes ∈ [0, dureeTotal-1] → toujours ≥ 0
+                    int anneeReception = t + 1;
+                    int anneesRestantes = dureeTotal - anneeReception;
                     return economie * Math.pow(1.0 + oloReferential.tauxPourDuree(anneesRestantes), anneesRestantes);
                 })
                 .sum();
@@ -54,4 +53,3 @@ public final class CalculateurCapitalisation {
                 .sum();
     }
 }
-
