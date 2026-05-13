@@ -74,19 +74,19 @@ class IntegrationEPvsCTTest {
         }
 
         @Test
-        @DisplayName("VAN EP et CT sont toutes positives pour versement > 0")
+        @DisplayName("Valeur terminale EP et CT sont toutes positives pour versement > 0")
         void vanPositivesPourVersementPositif() {
             List<ResultatSimulation> resEP = ComparateurVehicules.simulerPlage(
                     simEP, profil, rendement, 1, 2_000);
             List<ResultatSimulation> resCT = ComparateurVehicules.simulerPlage(
                     simCT, profil, rendement, 1, 2_000);
 
-            assertThat(resEP).allMatch(r -> r.vanTotale() > 0, "VAN EP > 0");
-            assertThat(resCT).allMatch(r -> r.vanTotale() > 0, "VAN CT > 0");
+            assertThat(resEP).allMatch(r -> r.valeurTerminale() > 0, "VT EP > 0");
+            assertThat(resCT).allMatch(r -> r.valeurTerminale() > 0, "VT CT > 0");
         }
 
         @Test
-        @DisplayName("VAN EP > VAN CT pour versement ≤ 1 050€ (avantage fiscal EP dominant)")
+        @DisplayName("Valeur terminale EP > CT pour versement ≤ 1 050€ (avantage fiscal EP dominant)")
         void epPlusVantageuxSousSeuilFiscal() {
             // Pour les petits versements (≤ 1 050€), la réduction 30% EP devrait
             // compenser la TOA et taxe anticipative (dans les paramètres défaut 0%)
@@ -96,15 +96,15 @@ class IntegrationEPvsCTTest {
                     simCT, profil, rendement, 500, 1_000);
 
             for (int i = 0; i < resEP.size(); i++) {
-                assertThat(resEP.get(i).vanTotale())
+                assertThat(resEP.get(i).valeurTerminale())
                         .as("EP doit être > CT pour versement %.0f€",
                                 resEP.get(i).versementAnnuel())
-                        .isGreaterThan(resCT.get(i).vanTotale());
+                        .isGreaterThan(resCT.get(i).valeurTerminale());
             }
         }
 
         @Test
-        @DisplayName("L'ajout de frais annuels EP réduit la VAN EP")
+        @DisplayName("L'ajout de frais annuels EP réduit la valeur terminale EP")
         void fraisAnnuelsEP_reduisent_vanEP() {
             ParametresBranche23 sansFreais = defautEpargnePension();
             ParametresBranche23 avecFrais  = ParametresBranche23.builder()
@@ -118,12 +118,12 @@ class IntegrationEPvsCTTest {
                     .ageLimiteReductionFiscale(65)
                     .build();
 
-            double vanSans = new SimulateurBranche23(sansFreais, "EP")
-                    .simuler(profil, 1_000.0, rendement).vanTotale();
-            double vanAvec = new SimulateurBranche23(avecFrais, "EP avec frais")
-                    .simuler(profil, 1_000.0, rendement).vanTotale();
+            double vtSans = new SimulateurBranche23(sansFreais, "EP")
+                    .simuler(profil, 1_000.0, rendement).valeurTerminale();
+            double vtAvec = new SimulateurBranche23(avecFrais, "EP avec frais")
+                    .simuler(profil, 1_000.0, rendement).valeurTerminale();
 
-            assertThat(vanAvec).isLessThan(vanSans);
+            assertThat(vtAvec).isLessThan(vtSans);
         }
 
         @Test
@@ -163,7 +163,7 @@ class IntegrationEPvsCTTest {
 
 
         @Test
-        @DisplayName("ELT avec TOA 2% a une VAN inférieure à ELT sans TOA (toutes choses égales)")
+        @DisplayName("ELT avec TOA 2% a une valeur terminale inférieure à ELT sans TOA (toutes choses égales)")
         void toa2pct_reduit_vanELT() {
             ParametresBranche23 avecTOA = defautEpargneLongTerme();  // TOA 2%
             ParametresBranche23 sansTOA = ParametresBranche23.builder()
@@ -177,10 +177,10 @@ class IntegrationEPvsCTTest {
                     .ageLimiteReductionFiscale(65)
                     .build();
 
-            double vanAvec = new SimulateurBranche23(avecTOA, "ELT").simuler(profil, 1_000.0, rendement).vanTotale();
-            double vanSans = new SimulateurBranche23(sansTOA, "ELT0").simuler(profil, 1_000.0, rendement).vanTotale();
+            double vtAvec = new SimulateurBranche23(avecTOA, "ELT").simuler(profil, 1_000.0, rendement).valeurTerminale();
+            double vtSans = new SimulateurBranche23(sansTOA, "ELT0").simuler(profil, 1_000.0, rendement).valeurTerminale();
 
-            assertThat(vanAvec).isLessThan(vanSans);
+            assertThat(vtAvec).isLessThan(vtSans);
         }
 
         @Test
@@ -191,9 +191,9 @@ class IntegrationEPvsCTTest {
 
             // À 1 200€ : EP donne 25% × 1200 = 300€ de réduction, ELT donne 30% × 1200 = 360€
             // MAIS ELT a TOA 2% qui pénalise le capital → résultat net dépend du bilan global
-            // On vérifie uniquement que la vanEconomiesFiscales est plus grande pour ELT
-            double ecoEP  = simEP.simuler(profil, 1_200.0, rendement).vanEconomiesFiscales();
-            double ecoELT = simELT.simuler(profil, 1_200.0, rendement).vanEconomiesFiscales();
+            // On vérifie uniquement que les économies fiscales capitalisées sont plus grandes pour ELT
+            double ecoEP  = simEP.simuler(profil, 1_200.0, rendement).economiesFiscalesCapitalisees();
+            double ecoELT = simELT.simuler(profil, 1_200.0, rendement).economiesFiscalesCapitalisees();
 
             assertThat(ecoELT).isGreaterThan(ecoEP);
         }
@@ -205,7 +205,7 @@ class IntegrationEPvsCTTest {
     class ProprietesMathematiques {
 
         @Test
-        @DisplayName("VAN est monotone croissante avec le versement")
+        @DisplayName("Valeur terminale est monotone croissante avec le versement")
         void vanMonotoneCroissante() {
             SimulateurBranche23 sim = new SimulateurBranche23(
                     defautEpargnePension(), "EP");
@@ -214,16 +214,16 @@ class IntegrationEPvsCTTest {
                     sim, profil, rendement, 0, 200);
 
             for (int i = 1; i < resultats.size(); i++) {
-                assertThat(resultats.get(i).vanTotale())
-                        .as("VAN doit croître entre versement %d et %d",
+                assertThat(resultats.get(i).valeurTerminale())
+                        .as("Valeur terminale doit croître entre versement %d et %d",
                                 (int) resultats.get(i-1).versementAnnuel(),
                                 (int) resultats.get(i).versementAnnuel())
-                        .isGreaterThanOrEqualTo(resultats.get(i-1).vanTotale());
+                        .isGreaterThanOrEqualTo(resultats.get(i-1).valeurTerminale());
             }
         }
 
         @Test
-        @DisplayName("VAN à versement 0 est nulle (ou très proche) pour EP et CT")
+        @DisplayName("Valeur terminale à versement 0 est nulle (ou très proche) pour EP et CT")
         void vanNulleAVersement0() {
             SimulateurBranche23 simEP = new SimulateurBranche23(
                     defautEpargnePension(), "EP");
@@ -232,9 +232,9 @@ class IntegrationEPvsCTTest {
                     Constants.CT_EXONERATION_ANNUELLE_DEFAUT,
                     Constants.CT_EXONERATION_ANNEES_MAX_DEFAUT)).build());
 
-            assertThat(simEP.simuler(profil, 0.0, rendement).vanTotale())
+            assertThat(simEP.simuler(profil, 0.0, rendement).valeurTerminale())
                     .isCloseTo(0.0, within(1e-6));
-            assertThat(simCT.simuler(profil, 0.0, rendement).vanTotale())
+            assertThat(simCT.simuler(profil, 0.0, rendement).valeurTerminale())
                     .isCloseTo(0.0, within(1e-6));
         }
     }

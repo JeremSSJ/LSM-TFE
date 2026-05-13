@@ -67,22 +67,21 @@ public final class SimulateurCT implements Simulateur {
                 accumulation.coutDeBase(),
                 profil.dureeAnnees());
 
-        double vanCap = CalculateurVAN.vanCapital(capitalNet, profil.dureeAnnees(), rendement.rendementAnnuel());
-
-        double coutTOBParAn = versementAnnuel * params.taxeOperationsBourse();
+        // Capitalisation des frais (TOB + courtage) vers l'échéance au taux OLO net de la durée
+        double coutTOBParAn   = versementAnnuel * params.taxeOperationsBourse();
         double coutFraisParAn = versementAnnuel * params.fraisParVersement();
-        double vanTOB = CalculateurVAN.vanCoutsAnnuels(coutTOBParAn, profil.dureeAnnees());
-        double vanFrais = CalculateurVAN.vanCoutsAnnuels(coutFraisParAn, profil.dureeAnnees());
+        double feesCapitalises = CalculateurCapitalisation.capitaliserCoutsAnnuels(
+                coutTOBParAn + coutFraisParAn, profil.dureeAnnees());
 
-        double vanTotale = vanCap - vanTOB - vanFrais;
+        double valeurTerminale = capitalNet - feesCapitalises;
 
         return new ResultatSimulation(
                 versementAnnuel,
                 accumulation.reserve(),
                 capitalNet,
-                vanTotale,
                 0.0,
-                vanTotale,
+                feesCapitalises,
+                valeurTerminale,
                 accumulation.taxeCompteTitresTotale(),
                 accumulation.annees());
     }

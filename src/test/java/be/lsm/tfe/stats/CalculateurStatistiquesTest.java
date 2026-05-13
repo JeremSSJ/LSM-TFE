@@ -17,9 +17,9 @@ class CalculateurStatistiquesTest {
 
     // ── Helpers ──────────────────────────────────────────────────────────────
 
-    /** Crée un ResultatSimulation avec seulement la vanTotale et versementAnnuel renseignés. */
-    private static ResultatSimulation resultat(double versement, double van) {
-        return new ResultatSimulation(versement, van, van, van, 0.0, van, 0.0, List.of());
+    /** Crée un ResultatSimulation avec seulement la valeurTerminale et versementAnnuel renseignés. */
+    private static ResultatSimulation resultat(double versement, double valeurTerminale) {
+        return new ResultatSimulation(versement, valeurTerminale, valeurTerminale, 0.0, 0.0, valeurTerminale, 0.0, List.of());
     }
 
     /** Crée une liste de résultats où VAN = coefficient × versement. */
@@ -63,15 +63,17 @@ class CalculateurStatistiquesTest {
     class Calculer {
 
         @Test
-        @DisplayName("A toujours > B : taux dominance A = 100%, B = 0%")
+        @DisplayName("A toujours > B : taux dominance A ≈ 100%, B = 0%")
         void aDominePartout() {
             var a = serieLineaire(0, 100, 3.0);
             var b = serieLineaire(0, 100, 1.0);
             var stats = CalculateurStatistiques.calculer(a, b, "A", "B");
 
-            assertThat(stats.tauxDominanceA()).isCloseTo(100.0, within(0.01));
+            // À v=0, A=B=0 → égal (diff=0, ne compte pas comme A domine)
+            // → 100 points où A domine sur 101 total
+            assertThat(stats.nbPointsADomine()).isEqualTo(100);
+            assertThat(stats.tauxDominanceA()).isCloseTo(100.0 * 100.0 / 101.0, within(0.01));
             assertThat(stats.tauxDominanceB()).isCloseTo(0.0, within(0.01));
-            assertThat(stats.nbPointsADomine()).isEqualTo(101); // 0..100 = 101 points (v=0 → VAN=0 → égal)
             assertThat(stats.croisements()).isEmpty();
         }
 

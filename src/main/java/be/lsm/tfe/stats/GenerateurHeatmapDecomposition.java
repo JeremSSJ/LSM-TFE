@@ -126,9 +126,9 @@ public final class GenerateurHeatmapDecomposition {
      * Une tolérance numérique de 1€ évite les faux positifs sur les valeurs égales.
      */
     private static Categorie categoriser(LigneRapportCSV l) {
-        double capB23 = l.vanMoyCapitalB23();
-        double ecoB23 = l.vanMoyEcoFiscalesB23();
-        double capCT  = l.vanMoyCapitalCT();
+        double capB23 = l.capitalFinalNetMoyenB23();
+        double ecoB23 = l.ecoFiscalesCapitaliseesMoyennesB23();
+        double capCT  = l.valTerminaleMoyenneCT();
 
         if (capB23 > capCT + 1.0) {
             return Categorie.B23_STRUCTUREL;
@@ -175,8 +175,8 @@ public final class GenerateurHeatmapDecomposition {
 
                     // ── Annotation : écart en € entre B23 total et CT ─────────
                     // Montre de combien (en VAN moyenne) l'instrument gagnant domine.
-                    double ecart = (l.vanMoyCapitalB23() + l.vanMoyEcoFiscalesB23())
-                                 - l.vanMoyCapitalCT();
+                    double ecart = (l.capitalFinalNetMoyenB23() + l.ecoFiscalesCapitaliseesMoyennesB23())
+                                 - l.valTerminaleMoyenneCT();
                     String texte = "%+,.0f€".formatted(ecart);
 
                     g2.setFont(new Font("SansSerif", Font.PLAIN, 8));

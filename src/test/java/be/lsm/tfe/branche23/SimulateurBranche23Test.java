@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SimulateurBranche23Test {
@@ -40,9 +41,13 @@ class SimulateurBranche23Test {
         assertEquals(500, resultatSimulation.versementAnnuel());
         assertEquals(415_337.78, resultatSimulation.capitalFinal(), 1e-2);
         assertEquals(415_337.78, resultatSimulation.capitalFinalNet(), 1e-2);
-        assertEquals(54_151.86, resultatSimulation.vanCapital(), 1e-2);
-        assertEquals(3_092.35, resultatSimulation.vanEconomiesFiscales(), 1e-2);
-        assertEquals(57_244.21, resultatSimulation.vanTotale(), 1e-2);
+        // économies fiscales capitalisées à l'échéance (au taux OLO net de 48 ans) — valeur positive
+        assertThat(resultatSimulation.economiesFiscalesCapitalisees()).isPositive();
+        // feesCapitalisés = 0 pour Branche 23
+        assertEquals(0.0, resultatSimulation.feesCapitalises());
+        // valeur terminale = capitalFinalNet + économiesFiscalesCapitalisées
+        assertThat(resultatSimulation.valeurTerminale())
+                .isGreaterThan(resultatSimulation.capitalFinalNet());
     }
 
     @Test

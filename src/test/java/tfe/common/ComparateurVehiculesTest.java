@@ -26,8 +26,8 @@ class ComparateurVehiculesTest {
             public ResultatSimulation simuler(ProfilInvestisseur p,
                                               double versementAnnuel,
                                               ParametresRendement r) {
-                double van = versementAnnuel * multiplicateur;
-                return new ResultatSimulation(versementAnnuel, van, van, van, 0.0, van, 0.0,List.of());
+                double vt = versementAnnuel * multiplicateur;
+                return new ResultatSimulation(versementAnnuel, vt, vt, 0.0, 0.0, vt, 0.0, List.of());
             }
             @Override
             public String nomVehicule() { return nom; }
@@ -77,14 +77,14 @@ class ComparateurVehiculesTest {
         }
 
         @Test
-        @DisplayName("Chaque résultat a la VAN = versement × multiplicateur")
+        @DisplayName("Chaque résultat a la valeur terminale = versement × multiplicateur")
         void chaquResultatVANCorrecte() {
             double mult = 2.5;
             Simulateur sim = stubSimulateur("X", mult);
             List<ResultatSimulation> resultats = ComparateurVehicules.simulerPlage(
                     sim, profil, rendement, 0, 10);
             IntStream.rangeClosed(0, 10).forEach(v ->
-                    assertThat(resultats.get(v).vanTotale())
+                    assertThat(resultats.get(v).valeurTerminale())
                             .isCloseTo(v * mult, within(1e-9)));
         }
     }
@@ -161,8 +161,8 @@ class ComparateurVehiculesTest {
                 public ResultatSimulation simuler(ProfilInvestisseur p,
                                                   double versementAnnuel,
                                                   ParametresRendement r) {
-                    double van = fn.calculer(versementAnnuel);
-                    return new ResultatSimulation(versementAnnuel, van, van, van, 0.0, van, 0.0,List.of());
+                    double vt = fn.calculer(versementAnnuel);
+                    return new ResultatSimulation(versementAnnuel, vt, vt, 0.0, 0.0, vt, 0.0, List.of());
                 }
                 @Override
                 public String nomVehicule() { return "test"; }

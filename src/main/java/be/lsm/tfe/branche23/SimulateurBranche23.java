@@ -1,6 +1,7 @@
 package be.lsm.tfe.branche23;
 
 import be.lsm.tfe.common.*;
+import be.lsm.tfe.common.CalculateurCapitalisation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,17 +90,17 @@ public final class SimulateurBranche23 implements Simulateur {
         double capitalFinalNet = annees.get(annees.size() - 1).reserveEnFinAnnee();
         int    duree           = profil.dureeAnnees();
 
-        double vanCap = CalculateurVAN.vanCapital(capitalFinalNet, duree, rendement.rendementAnnuel());
-        double vanEco = CalculateurVAN.vanEconomiesFiscales(annees);
-        double vanTot = vanCap + vanEco;
+        // Capitalisation des économies fiscales vers l'échéance au taux OLO net de la durée
+        double ecoCapitalisees = CalculateurCapitalisation.capitaliserEconomiesFiscales(annees, duree);
+        double valeurTerminale = capitalFinalNet + ecoCapitalisees;
 
         return new ResultatSimulation(
                 versementAnnuel,
                 capitalFinalNet,
                 capitalFinalNet,
-                vanCap,
-                vanEco,
-                vanTot,
+                ecoCapitalisees,
+                0.0,
+                valeurTerminale,
                 taxeCompteTitresTotale,
                 annees);
     }

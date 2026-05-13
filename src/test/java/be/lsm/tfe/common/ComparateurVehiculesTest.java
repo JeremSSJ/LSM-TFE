@@ -54,6 +54,9 @@ class ComparateurVehiculesTest {
 
         List<PointCroisement> croisements = ComparateurVehicules.trouverCroisements(resELT, resCTavELT);
 
-        assertEquals(0, croisements.size());
+        // Avec la valeur terminale (capitalisation des flux annexes), la comparaison
+        // ELT vs CT révèle 1 croisement sur la plage de versements 1→2450.
+        // (Avec l'ancienne VAN actualisée, la courbe était plate → 0 croisements.)
+        assertEquals(1, croisements.size());
     }
 }

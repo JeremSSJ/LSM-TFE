@@ -3,26 +3,26 @@ package be.lsm.tfe.stats;
 /**
  * Représente une ligne du rapport CSV multi-scénarios.
  *
- * @param vehiculeA              Nom du véhicule A (Branche 23)
- * @param vehiculeB              Nom du véhicule B (CT)
- * @param rendementPct           Rendement annuel brut (en %)
- * @param ageDebut               Âge de début des versements
- * @param ageFin                 Âge de fin des versements
- * @param tauxTaxePVpct          Taux de la taxe PV sur le CT (en %)
- * @param versementMin           Versement minimal de la plage (€)
- * @param versementMax           Versement maximal de la plage (€)
- * @param tauxDominanceA         % de la plage où A domine
- * @param tauxDominanceB         % de la plage où B domine
- * @param tauxEgaux              % de la plage où A et B sont ex æquo
- * @param nbCroisements          Nombre de points de croisement détectés
- * @param premierCroisement      Versement au premier croisement (ou NaN)
- * @param dominant               Instrument dominant global
- * @param vanMoyCapitalB23       VAN moyenne du capital B23 sur la plage (€)
- *                               = capital net après taxe anticipative, actualisé, hors éco. fiscales
- * @param vanMoyEcoFiscalesB23   VAN moyenne des économies fiscales B23 sur la plage (€)
- *                               = VAN des réductions d'impôt annuelles actualisées
- * @param vanMoyCapitalCT        VAN moyenne du capital CT sur la plage (€)
- *                               = capital net après taxe PV, actualisé
+ * @param vehiculeA                          Nom du véhicule A (Branche 23)
+ * @param vehiculeB                          Nom du véhicule B (CT)
+ * @param rendementPct                       Rendement annuel brut (en %)
+ * @param ageDebut                           Âge de début des versements
+ * @param ageFin                             Âge de fin des versements
+ * @param tauxTaxePVpct                      Taux de la taxe PV sur le CT (en %)
+ * @param versementMin                       Versement minimal de la plage (€)
+ * @param versementMax                       Versement maximal de la plage (€)
+ * @param tauxDominanceA                     % de la plage où A domine
+ * @param tauxDominanceB                     % de la plage où B domine
+ * @param tauxEgaux                          % de la plage où A et B sont ex æquo
+ * @param nbCroisements                      Nombre de points de croisement détectés
+ * @param premierCroisement                  Versement au premier croisement (ou NaN)
+ * @param dominant                           Instrument dominant global
+ * @param capitalFinalNetMoyenB23            Moyenne du capital final net B23 (€)
+ *                                           = capital net après taxe anticipative, non actualisé
+ * @param ecoFiscalesCapitaliseesMoyennesB23 Moyenne des économies fiscales capitalisées B23 (€)
+ *                                           = économies fiscales capitalisées au taux OLO de la durée
+ * @param valTerminaleMoyenneCT              Moyenne de la valeur terminale CT (€)
+ *                                           = capital net après taxe PV − frais capitalisés
  */
 public record LigneRapportCSV(
         String vehiculeA,
@@ -39,9 +39,9 @@ public record LigneRapportCSV(
         int    nbCroisements,
         double premierCroisement,
         String dominant,
-        double vanMoyCapitalB23,
-        double vanMoyEcoFiscalesB23,
-        double vanMoyCapitalCT
+        double capitalFinalNetMoyenB23,
+        double ecoFiscalesCapitaliseesMoyennesB23,
+        double valTerminaleMoyenneCT
 ) {
     /** En-tête CSV. */
     public static String entete() {
@@ -52,9 +52,9 @@ public record LigneRapportCSV(
                 "taux_dominance_A_pct", "taux_dominance_B_pct", "taux_egaux_pct",
                 "nb_croisements", "premier_croisement_eur",
                 "dominant",
-                "van_moy_capital_b23_eur",
-                "van_moy_eco_fiscales_b23_eur",
-                "van_moy_capital_ct_eur"
+                "capital_final_net_moyen_b23_eur",
+                "eco_fiscales_capitalisees_moyennes_b23_eur",
+                "val_terminale_moyenne_ct_eur"
         );
     }
 
@@ -69,9 +69,9 @@ public record LigneRapportCSV(
                 String.valueOf(nbCroisements),
                 Double.isNaN(premierCroisement) ? "NA" : fmt(premierCroisement),
                 dominant,
-                fmt(vanMoyCapitalB23),
-                fmt(vanMoyEcoFiscalesB23),
-                fmt(vanMoyCapitalCT)
+                fmt(capitalFinalNetMoyenB23),
+                fmt(ecoFiscalesCapitaliseesMoyennesB23),
+                fmt(valTerminaleMoyenneCT)
         );
     }
 
@@ -97,9 +97,9 @@ public record LigneRapportCSV(
                 stats.croisements().size(),
                 stats.premierCroisement(),
                 stats.instrumentDominantGlobal(),
-                stats.vanMoyenneCapitalB23(),
-                stats.vanMoyenneEcoFiscalesB23(),
-                stats.vanMoyenneCapitalCT()
+                stats.capitalFinalNetMoyenB23(),
+                stats.ecoFiscalesCapitaliseesMoyennesB23(),
+                stats.valTerminaleMoyenneCT()
         );
     }
 }

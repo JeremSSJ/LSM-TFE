@@ -68,17 +68,17 @@ public final class CalculateurStatistiques {
         else if (aire > 0)          dominant = nomA;
         else                        dominant = nomB;
 
-        // ── VAN moyennes des 3 composantes ───────────────────────────────────
-        double vanMoyCapB23 = resultatsA.stream()
-                .mapToDouble(ResultatSimulation::vanCapital)
+        // ── Valeurs terminales moyennes des 3 composantes ────────────────────
+        double capitalFinalNetMoyenB23 = resultatsA.stream()
+                .mapToDouble(ResultatSimulation::capitalFinalNet)
                 .average().orElse(0.0);
 
-        double vanMoyEcoB23 = resultatsA.stream()
-                .mapToDouble(ResultatSimulation::vanEconomiesFiscales)
+        double ecoCapitaliseesMoyennesB23 = resultatsA.stream()
+                .mapToDouble(ResultatSimulation::economiesFiscalesCapitalisees)
                 .average().orElse(0.0);
 
-        double vanMoyCapCT = resultatsB.stream()
-                .mapToDouble(ResultatSimulation::vanTotale)
+        double valTerminaleMoyenneCT = resultatsB.stream()
+                .mapToDouble(ResultatSimulation::valeurTerminale)
                 .average().orElse(0.0);
 
         return new StatistiquesComparaison(
@@ -89,19 +89,19 @@ public final class CalculateurStatistiques {
                 croisements,
                 premierCroisement, dernierCroisement,
                 dominant,
-                vanMoyCapB23,
-                vanMoyEcoB23,
-                vanMoyCapCT
+                capitalFinalNetMoyenB23,
+                ecoCapitaliseesMoyennesB23,
+                valTerminaleMoyenneCT
         );
     }
 
     // ── Méthodes atomiques (testables unitairement) ───────────────────────────
 
-    /** Calcule le tableau des différences VAN(A) - VAN(B) pour chaque index. */
+    /** Calcule le tableau des différences valeurTerminale(A) - valeurTerminale(B) pour chaque index. */
     public static double[] calculerDifferences(
             List<ResultatSimulation> a, List<ResultatSimulation> b) {
         return IntStream.range(0, a.size())
-                .mapToDouble(i -> a.get(i).vanTotale() - b.get(i).vanTotale())
+                .mapToDouble(i -> a.get(i).valeurTerminale() - b.get(i).valeurTerminale())
                 .toArray();
     }
 }

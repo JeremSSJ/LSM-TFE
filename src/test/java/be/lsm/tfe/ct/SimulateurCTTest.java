@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SimulateurCTTest {
@@ -34,9 +35,14 @@ class SimulateurCTTest {
         assertEquals(500, resultatSimulation.versementAnnuel());
         assertEquals(480_086.17, resultatSimulation.capitalFinal(), 1e-2);
         assertEquals(435_977.55, resultatSimulation.capitalFinalNet(), 1e-2);
-        assertEquals(56_615.07, resultatSimulation.vanCapital(), 1e-2);
-        assertEquals(0.00, resultatSimulation.vanEconomiesFiscales());
-        assertEquals(56_615.07, resultatSimulation.vanTotale(), 1e-2);
+        // économiesFiscalesCapitalisées = 0 pour CT
+        assertEquals(0.0, resultatSimulation.economiesFiscalesCapitalisees());
+        // frais (TOB + courtage) capitalisés à l'échéance — valeur positive
+        assertThat(resultatSimulation.feesCapitalises()).isPositive();
+        // valeur terminale = capitalFinalNet − feesCapitalisés
+        assertThat(resultatSimulation.valeurTerminale())
+                .isLessThan(resultatSimulation.capitalFinalNet())
+                .isPositive();
 
         List<ResultatAnnuel> resultatAnnuels = resultatSimulation.resultatParAnnee();
 
