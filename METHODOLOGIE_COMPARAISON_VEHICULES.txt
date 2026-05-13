@@ -10,7 +10,7 @@ TABLE DES MATIÈRES
   1. Présentation générale de l'approche
   2. Les véhicules d'investissement analysés
   3. Le profil investisseur
-  4. Le critère de comparaison : la Valeur Actuelle Nette (VAN)
+  4. Le critère de comparaison : la Valeur Terminale nette (VT)
   5. Description des quatre scénarios
   6. Paramètres communs à tous les scénarios
   7. Modélisation du Compte-Titres (CT)
@@ -35,7 +35,7 @@ qu'un investissement équivalent via un Compte-Titres en Belgique.
 La méthodologie repose sur une simulation déterministe et systématique. Pour chaque
 combinaison possible (âge de début × taux de rendement), on simule deux instruments
 sur la même durée, avec le même versement annuel, et on compare leur résultat net
-exprimé en Valeur Actuelle Nette (VAN). Cette comparaison est répétée pour l'ensemble
+exprimé en Valeur Terminale nette (VT). Cette comparaison est répétée pour l'ensemble
 d'une plage de versements annuels, ce qui permet de quantifier non seulement qui
 « gagne », mais à partir de quel niveau de versement et dans quelle proportion.
 
@@ -84,8 +84,9 @@ Un profil investisseur est défini par :
 
 La durée de l'investissement est donc : durée = ageFin − ageDebut années.
 
-Les versements sont supposés constants d'année en année (annuités constantes). Ils sont
-effectués en début d'année (premier versement à l'âge de début, dernier à l'âge de fin).
+Les versements sont supposés constants d'année en année (annuités constantes).
+Dans l'implémentation actuelle, le versement de l'année est ajouté après les
+prélèvements annuels éventuels (taxe anticipative et/ou TCT).
 
 Règle particulière pour la Branche 23 :
   Si l'investisseur souscrit après l'âge de 55 ans, la règle des « 10 ans minimum avant
@@ -93,24 +94,28 @@ Règle particulière pour la Branche 23 :
 
 
 ═══════════════════════════════════════════════════════════════════════════════════════
-4. LE CRITÈRE DE COMPARAISON : LA VALEUR ACTUELLE NETTE (VAN)
+4. LE CRITÈRE DE COMPARAISON : LA VALEUR TERMINALE NETTE (VT)
 ═══════════════════════════════════════════════════════════════════════════════════════
 
-La comparaison entre les deux instruments repose exclusivement sur leur VAN totale,
-définie comme la somme actualisée de tous les flux nets de l'investisseur.
+La comparaison entre les deux instruments repose exclusivement sur leur valeur
+terminale nette (VT), calculée à l'échéance.
 
-L'actualisation repose sur un référentiel OLO dépendant de la durée (1 à 30 ans),
+Le projet n'utilise plus de logique de VAN : la classe `CalculateurVAN` est
+dépréciée et conservée uniquement pour compatibilité transitoire.
+
+La capitalisation des flux annexes repose sur un référentiel OLO dépendant de la durée
+(1 à 30 ans),
 avec une correspondance directe année → taux. Pour toute durée supérieure à 30 ans,
 le taux de la 30e année est réutilisé.
 
 Notations :
   - r(n) = taux OLO correspondant à la durée n (via le référentiel)
   - r(n) = r(30) si n > 30
-  - VA(m, n) = m / (1 + r(n))^n
+  - VC(m, n) = m × (1 + r(n))^n
 
 4.0 Référentiel OLO utilisé (code)
 ──────────────────────────────────
-Les taux d'actualisation utilisés sont ceux de `oloReferential`, définis pour les
+Les taux utilisés pour la capitalisation sont ceux de `oloReferential`, définis pour les
 durées 1 à 30 ans.
 
 Le code applique un facteur 0,7 à chaque taux OLO brut :
@@ -124,7 +129,7 @@ Formellement :
 
   taux_net = taux_brut × (1 − 30 %) = taux_brut × 0,7
 
-Table des taux du référentiel (brut → net utilisé pour l'actualisation) :
+Table des taux du référentiel (brut → net utilisé pour la capitalisation) :
 
   Année   OLO brut (%)   OLO net utilisé (%)
   ------------------------------------------
@@ -161,63 +166,51 @@ Table des taux du référentiel (brut → net utilisé pour l'actualisation) :
 
 Pour une durée > 30 ans, le modèle applique le taux net de l'année 30.
 
-4.1 VAN d'un instrument de la Branche 23
+4.1 VT d'un instrument de la Branche 23
 ─────────────────────────────────────────
-La VAN B23 est décomposée en deux composantes :
+La valeur terminale B23 est décomposée en deux composantes :
 
-  VAN_B23 = VAN_Capital_B23 + VAN_EconomiesFiscales_B23
+  VT_B23 = CapitalFinalNet_B23 + EcoFiscalesCapitalisees_B23
 
-  • VAN_Capital_B23 :
-    Valeur actuelle du capital net accumulé à l'échéance (après déduction de la taxe
-    anticipative), actualisé sur toute la durée de l'investissement.
+  • CapitalFinalNet_B23 :
+    Capital net en fin de simulation (après taxe anticipative éventuelle et TCT
+    annuelle éventuelle).
 
-        VAN_Capital = VA(CapitalFinalNet, durée)
+  • EcoFiscalesCapitalisees_B23 :
+    Somme des réductions d'impôt annuelles capitalisées jusqu'à l'échéance.
+    Pour l'économie fiscale de l'année t (perçue en t+1), le nombre d'années
+    restantes est : (dureeTotale - (t+1)).
 
-  • VAN_EconomiesFiscales_B23 :
-    Somme actualisée des réductions d'impôt annuelles obtenues grâce à la déduction
-    fiscale. Chaque économie fiscale encaissée à l'année t est actualisée avec le taux
-    OLO correspondant à la maturité (t+1), car elle est perçue l'année suivante
-    (remboursement d'impôt).
+        EcoCap = Σ [Economie(t) × (1 + r(anneesRestantes))^(anneesRestantes)]
+                 pour t = 0 à N-1
 
-        VAN_Eco = Σ [VA(EconomieFiscale(t), t+1)]  pour t = 0 à N-1
-
-Usage opérationnel des taux par maturité dans le code :
-  - VAN du capital final : application de r(durée)
-  - VAN des économies fiscales de l'année t : application de r(t+1)
-  - VAN des coûts annuels (TOB, frais) à l'année t : application de r(t)
-
-Autrement dit, chaque flux est actualisé avec le taux correspondant à son horizon
-propre, et non avec un taux unique fixe.
-
-4.2 VAN d'un Compte-Titres
+4.2 VT d'un Compte-Titres
 ──────────────────────────
-La VAN du CT intègre le capital net et les coûts récurrents :
+La valeur terminale du CT intègre le capital net et les coûts capitalisés :
 
-  VAN_CT = VAN_CapitalNet_CT − VAN_TOB − VAN_FraisParVersement
+  VT_CT = CapitalNet_CT − FeesCapitalises_CT
 
-  • VAN_CapitalNet_CT :
-    Valeur actuelle du capital brut après déduction de la taxe éventuelle sur les
-    plus-values, actualisé sur la durée.
+  • CapitalNet_CT :
+    Capital final net après taxe éventuelle sur les plus-values.
 
-  • VAN_TOB (Taxe sur les Opérations de Bourse) :
-    Actualisée comme une rente annuelle sur toute la durée, avec le taux OLO de
-    maturité t pour chaque terme :
-        VAN_TOB = Σ [VA(versement × tauxTOB, t)]  pour t = 0 à N
+  • FeesCapitalises_CT :
+    Coûts annuels (TOB + frais par versement) capitalisés à l'échéance :
 
-  • VAN_FraisParVersement :
-    Calculée de la même façon que la VAN_TOB.
-
-Note : le CT ne génère pas d'économies fiscales à l'entrée (vanEconomiesFiscales = 0).
+        FeesCap = Σ [CoutAnnuel × (1 + r(duree - t))^(duree - t)]
+                  pour t = 0 à duree
 
 4.3 Comparaison
 ───────────────
 Pour chaque versement annuel v de la plage testée, on calcule la différence :
 
-  Δ(v) = VAN_B23(v) − VAN_CT(v)
+  Δ(v) = VT_B23(v) − VT_CT(v)
 
   • Si Δ(v) > 0 → la Branche 23 est plus avantageuse pour ce versement
   • Si Δ(v) < 0 → le Compte-Titres est plus avantageux
-  • Si Δ(v) ≈ 0 → ex æquo (|Δ| < 1 € de VAN)
+  • Si Δ(v) = 0 → ex aequo strict sur ce versement
+
+Remarque implémentation : les tests de croisement filtrent les quasi-zéros numériques
+avec un seuil de 1e-6 sur la valeur terminale.
 
 
 ═══════════════════════════════════════════════════════════════════════════════════════
@@ -261,6 +254,10 @@ SCÉNARIO 4 — ELT B23 vs CT avec taxe PV 10 %
   Combinaison la plus favorable à la Branche 23 ELT : le CT subit une taxe PV de
   10 % à la sortie, réduisant son avantage lié à l'absence de taxe anticipative.
 
+Implémentation actuelle : le code contient deux lanceurs statistiques complets,
+`ScenarioStatistiquesComplet` et `ScenarioStatistiquesCompletLast`, qui utilisent la
+même structure de 4 scénarios mais des calibrations de frais/rendements différentes.
+
 
 ═══════════════════════════════════════════════════════════════════════════════════════
 6. PARAMÈTRES COMMUNS À TOUS LES SCÉNARIOS
@@ -271,7 +268,8 @@ SCÉNARIO 4 — ELT B23 vs CT avec taxe PV 10 %
   Âge de fin de l'horizon            65 ans
   Âge de début (plage simulée)       18 à 55 ans (pas de 1 an)
   Année de naissance (référence)     2008
-  Actualisation OLO                  Référentiel par durée (1..30 ans),
+  Référentiel OLO net (capitalisation)
+                                     Référentiel par durée (1..30 ans),
                                      puis taux 30 ans au-delà
   Rendement annuel brut (plage)      3 % à 10 % (pas de 1 %)
   TOB CT                             0,12 % par versement
@@ -286,20 +284,28 @@ SCÉNARIO 4 — ELT B23 vs CT avec taxe PV 10 %
   Taux TCT                           0,15 %
   Plafond TCT                        10 % du dépassement du seuil
 
-Note : certains scénarios d'exploration peuvent utiliser des paramètres de frais
-différents, mais la structure de calcul reste identique.
+Note : la table ci-dessus correspond à `ScenarioStatistiquesComplet`.
+Dans `ScenarioStatistiquesCompletLast`, les principales différences sont :
+  - rendement balayé de 2 % à 10 % (pas 1 %),
+  - CT : frais par versement = 0, frais de gestion annuels = 0,
+  - B23 : frais par prime = 2,83 %, frais de gestion annuels = 2,34 %.
+La structure de calcul (VT, TCT, taxe anticipative, taxe PV) reste identique.
 
 
 ═══════════════════════════════════════════════════════════════════════════════════════
 7. MODÉLISATION DU COMPTE-TITRES (CT)
 ═══════════════════════════════════════════════════════════════════════════════════════
 
-7.1 Accumulation du capital
+7.1 Accumulation du capital (ordre de calcul annuel)
 ────────────────────────────
 À chaque année t (t = 0 étant l'année du premier versement) :
 
-  Réserve(t=0) = versementAnnuel
-  Réserve(t)   = Réserve(t-1) × (1 + rendement) × (1 − fraisGestion) + versementAnnuel
+  reserveAvantVersement(t) = 0                                           si t = 0
+                           = Reserve(t-1) × (1 + rendement) × (1 − fraisGestion) sinon
+
+  TCT(t)                    = taxeCompteTitres(reserveAvantVersement(t))
+  reserveApresTaxes(t)      = reserveAvantVersement(t) − TCT(t)
+  Reserve(t)                = reserveApresTaxes(t) + versementAnnuel
 
 Les versements ne subissent pas de déduction à l'entrée (pas de taxe TOA pour le CT).
 
@@ -327,12 +333,15 @@ Note méthodologique : le prix de revient est calculé par la méthode du coût 
   • Taxe sur les Opérations de Bourse (TOB) : 0,12 % par versement annuel
   • Frais de courtage par versement         : 0,80 % par versement annuel
 
-Ces coûts sont intégrés dans la VAN via une rente annuelle actualisée (et non déduits
-du capital, afin de conserver une cohérence avec la structure de la VAN B23).
+Ces coûts sont capitalisés à l'échéance puis retranchés de la valeur terminale CT :
+
+  coutAnnuel      = versementAnnuel × (tauxTOB + tauxFraisVersement)
+  feesCapitalises = Σ [coutAnnuel × (1 + r(duree - t))^(duree - t)]  pour t = 0 à duree
+  VT_CT           = capitalNet − feesCapitalises
 
 7.4 Taxe annuelle sur les comptes-titres (TCT)
 ───────────────────────────────────────────────
-La TCT est calculée chaque année sur la réserve de fin d'année avant prélèvement.
+La TCT est calculée chaque année sur la réserve avant versement de l'année.
 
   Si Réserve_fin ≤ 1 000 000 € :
       TCT = 0
@@ -342,7 +351,8 @@ La TCT est calculée chaque année sur la réserve de fin d'année avant prélè
       plafond     = (Réserve_fin − 1 000 000) × 10 %
       TCT         = min(taxeNormale, plafond)
 
-La TCT annuelle est ensuite déduite de la réserve et cumulée sur l'horizon.
+La TCT annuelle est ensuite déduite de la réserve, puis le versement de l'année est ajouté.
+La TCT est cumulée sur tout l'horizon (`taxeCompteTitresTotale`).
 
 
 ═══════════════════════════════════════════════════════════════════════════════════════
@@ -371,13 +381,19 @@ La déduction fiscale pour épargne-pension génère une économie d'impôt chaq
 
 La réduction fiscale est applicable uniquement entre 18 ans et 64 ans inclus.
 
-8.3 Accumulation du capital
+8.3 Accumulation du capital (ordre de calcul annuel)
 ────────────────────────────
 Le capital s'accumule de la même manière qu'au CT, mais sur la base du versement net
 (après frais de chargement, sans taxe TOA) :
 
-  Réserve(t=0) = versementNet
-  Réserve(t)   = Réserve(t-1) × (1 + rendement) × (1 − fraisGestion) + versementNet
+  reserveAvantVersement(t) = 0                                           si t = 0
+                           = Reserve(t-1) × (1 + rendement) × (1 − fraisGestion) sinon
+
+  si année anticipative :
+      reserveAvantVersement(t) = reserveAvantVersement(t) × (1 − tauxTaxeAnticipative)
+
+  TCT(t)       = taxeCompteTitres(reserveAvantVersement(t))
+  Reserve(t)   = reserveAvantVersement(t) − TCT(t) + versementNet
 
 8.4 Taxe anticipative à 60 ans
 ───────────────────────────────
@@ -387,7 +403,8 @@ moment où l'investisseur atteint ses 60 ans (hors versement de cette année-là
   réserveAvantVersement = Réserve(59 ans) × (1 + rendement)
   réserveAprèsTaxe      = réserveAvantVersement × (1 − 8 %)
 
-Le versement de l'année du 60e anniversaire est ensuite ajouté après le prélèvement.
+Le versement de l'année concernée est ajouté après les prélèvements (taxe anticipative,
+puis TCT éventuelle).
 
 Règle pour les souscriptions tardives (après 55 ans) :
   Si l'investisseur commence après 55 ans, la taxe anticipative n'est perçue qu'après
@@ -395,9 +412,12 @@ Règle pour les souscriptions tardives (après 55 ans) :
 
 8.5 Pas de taxe à la sortie (hors TCT annuelle)
 ────────────────────────────
-Contrairement au CT, la Branche 23 ne supporte aucune taxe supplémentaire à l'échéance.
-Le capital final net est directement le solde de la réserve après taxe anticipative,
-et après éventuelles TCT annuelles si le seuil est dépassé durant la phase d'accumulation.
+Contrairement au CT, la Branche 23 ne supporte pas de taxe PV de sortie à l'échéance.
+La comparaison se fait sur :
+
+  VT_B23 = capitalFinalNet + ecoFiscalesCapitalisees
+
+où `capitalFinalNet` inclut déjà les éventuelles TCT annuelles prélevées en cours de vie.
 
 
 ═══════════════════════════════════════════════════════════════════════════════════════
@@ -433,14 +453,15 @@ L'ELT reprend la même structure de simulation que l'EP, avec les différences s
 
 9.4 Accumulation et taxe anticipative
 ───────────────────────────────────────
-  La capitalisation suit la même formule qu'en section 8.3.
+  La capitalisation suit la même séquence annuelle qu'en section 8.3
+  (versement ajouté après taxe anticipative/TCT éventuelles).
   La taxe anticipative de 10 % est appliquée dans les mêmes conditions qu'en 8.4.
 
 9.5 TCT annuelle dans le modèle
 ────────────────────────────────
 Comme pour l'EP et le CT, une TCT annuelle est appliquée dans l'implémentation
-actuelle lorsque la réserve de fin d'année dépasse 1 000 000 €, selon la même
-règle de taux/plafond décrite en section 7.4.
+actuelle lorsque la réserve avant versement de l'année dépasse 1 000 000 €,
+selon la même règle de taux/plafond décrite en section 7.4.
 
 
 ═══════════════════════════════════════════════════════════════════════════════════════
@@ -452,12 +473,12 @@ pour chaque versement annuel entier de la plage :
   • EP  : v ∈ {1, 2, 3, …, 1 350} €/an → 1 350 simulations par instrument
   • ELT : v ∈ {1, 2, 3, …, 2 450} €/an → 2 450 simulations par instrument
 
-Pour chaque valeur de versement v, on compare VAN_B23(v) et VAN_CT(v).
+Pour chaque valeur de versement v, on compare VT_B23(v) et VT_CT(v).
 
 Indicateurs de dominance calculés sur la plage :
-  • Taux de dominance A (%) = 100 × nb(v où VAN_B23 > VAN_CT) / nb(v total)
-  • Taux de dominance B (%) = 100 × nb(v où VAN_CT > VAN_B23) / nb(v total)
-  • Taux d'égalité (%)      = 100 × nb(v où VAN_B23 = VAN_CT) / nb(v total)
+  • Taux de dominance A (%) = 100 × nb(v où VT_B23 > VT_CT) / nb(v total)
+  • Taux de dominance B (%) = 100 × nb(v où VT_CT > VT_B23) / nb(v total)
+  • Taux d'égalité (%)      = 100 × nb(v où VT_B23 = VT_CT) / nb(v total)
 
 Dominant global :
   Le dominant global est déterminé en comparant les taux de dominance respectifs des
@@ -468,7 +489,7 @@ Dominant global :
     • Si tauxDominance_B23 = tauxDominance_CT   → Ex æquo (aucun instrument ne domine l'autre)
 
   Exemple d'interprétation : un taux de dominance B23 de 80 % signifie que, pour 80 %
-  des versements annuels testés dans la plage légale, la Branche 23 offre une VAN
+  des versements annuels testés dans la plage légale, la Branche 23 offre une VT
   supérieure à celle du Compte-Titres.
 
 
@@ -480,7 +501,7 @@ Un point de croisement est le versement annuel v* à partir duquel la hiérarchi
 les deux instruments s'inverse (B23 passe devant CT, ou l'inverse).
 
 Méthode de détection :
-  On parcourt la série des différences Δ(v) = VAN_B23(v) − VAN_CT(v) et on repère
+  On parcourt la série des différences Δ(v) = VT_B23(v) − VT_CT(v) et on repère
   tout changement de signe entre deux versements consécutifs v_i et v_{i+1} :
 
     si signe(Δ(v_i)) ≠ signe(Δ(v_{i+1}))  →  il existe un croisement entre v_i et v_{i+1}
@@ -490,8 +511,8 @@ Méthode de détection :
     v* = v_i − Δ(v_i) × (v_{i+1} − v_i) / (Δ(v_{i+1}) − Δ(v_i))
 
 Filtrage des faux positifs :
-  Une condition supplémentaire exige que l'un des deux instruments ait une VAN non nulle
-  (|VAN| > 10^−6 €) afin d'éliminer les artefacts numériques en début de plage.
+  Une condition supplémentaire exige que l'un des deux instruments ait une valeur
+  terminale non nulle (|VT| > 10^−6 €) afin d'éliminer les artefacts numériques.
 
 Interprétation des points de croisement :
   • Premier croisement  : versement à partir duquel l'avantage bascule pour la première fois.
@@ -523,9 +544,9 @@ Pour chaque combinaison (ageDebut, rendement), une ligne CSV est produite conten
   nb_croisements               Nombre de points de croisement détectés
   premier_croisement_eur       Versement du 1er croisement en € (ou NA si absent)
   dominant                     Instrument dominant global (par l'aire)
-  van_moy_capital_b23_eur      VAN moyenne du capital B23 sur la plage (€)
-  van_moy_eco_fiscales_b23_eur VAN moyenne des économies fiscales B23 (€)
-  van_moy_capital_ct_eur       VAN moyenne du capital CT net sur la plage (€)
+  capital_final_net_moyen_b23_eur            Capital final net moyen B23 (€)
+  eco_fiscales_capitalisees_moyennes_b23_eur Économies fiscales capitalisées moyennes B23 (€)
+  val_terminale_moyenne_ct_eur               Valeur terminale moyenne CT (€)
 
 Indicateurs internes supplémentaires (niveau simulation unitaire) :
   • taxeCompteTitresTotale : cumul des TCT annuelles sur toute la durée.
@@ -593,26 +614,31 @@ Les hypothèses suivantes constituent des simplifications par rapport à la réa
      changement législatif futur (modification des taux, des plafonds, etc.) n'est
      pas pris en compte.
 
-  e) COMPARAISON EN VAN ET NON EN CAPITAL BRUT
-     Le critère de comparaison est la VAN et non le capital accumulé. Ce choix permet
-     de tenir compte du moment où les flux sont perçus (économies fiscales annuelles
-     vs capital à terme), mais il dépend de la courbe d'actualisation OLO retenue.
+  e) COMPARAISON EN VALEUR TERMINALE (ET NON EN VAN)
+     Le critère de comparaison est la valeur terminale nette à l'échéance. Le moment
+     des flux est pris en compte par leur capitalisation (économies fiscales et coûts)
+     via la courbe OLO nette retenue.
 
-  f) ABSENCE DE RISQUE DE CONTREPARTIE
+  f) CHOIX DU MOTEUR DE CAPITALISATION
+     La classe `CalculateurVAN` est conservée pour compatibilité mais n'est plus
+     utilisée dans la chaîne de calcul. Les résultats reposent sur
+     `CalculateurCapitalisation`.
+
+  g) ABSENCE DE RISQUE DE CONTREPARTIE
      Les deux instruments sont supposés sans risque de défaut ou de faillite de
      l'assureur / du courtier.
 
-  g) HORIZON RETRAITE FIXE
+  h) HORIZON RETRAITE FIXE
      L'horizon est fixé à 65 ans pour tous les profils. La possibilité de rachat
      anticipé ou de transfert de contrat n'est pas modélisée.
 
-  h) MÉTHODE D'EXONÉRATION PV SIMPLIFIÉE
+  i) MÉTHODE D'EXONÉRATION PV SIMPLIFIÉE
      L'exonération des plus-values pour le CT est calculée de manière forfaitaire
      (montant de base + cumul annuel plafonné), ce qui est une approximation du
      régime réel.
 
-  i) ASSIETTE TCT APPROCHÉE
-     La TCT est évaluée sur la réserve de fin d'année avant prélèvement, ce qui
+  j) ASSIETTE TCT APPROCHÉE
+     La TCT est évaluée sur la réserve avant versement de l'année, ce qui
      constitue une approximation par rapport à un calcul fondé sur des moyennes
      infra-annuelles plus fines.
 
