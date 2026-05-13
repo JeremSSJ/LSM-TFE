@@ -76,16 +76,16 @@ public final class ScenarioStatistiquesCompletLast {
         // ── Paramètres CT (communs aux 4 scénarios) ───────────────────────────
         ParametresCT paramsCTsans = ParametresCT.builder()
                 .taxeOperationsBourse(0.0012)
-                .fraisParVersement(0.0)
-                .fraisGestionAnnuels(0.0)
+                .fraisParVersement(0.0008)
+                .fraisGestionAnnuels(0.0012)
                 .tauxTaxePlusValues(0.0)
                 .exoneration(new ExonerationPlusValues(10_000.0, 1_000.0, 5))
                 .build();
 
         ParametresCT paramsCTavec = ParametresCT.builder()
                 .taxeOperationsBourse(0.0012)
-                .fraisParVersement(0.0)
-                .fraisGestionAnnuels(0.0)
+                .fraisParVersement(0.0008)
+                .fraisGestionAnnuels(0.0012)
                 .tauxTaxePlusValues(0.10)
                 .exoneration(new ExonerationPlusValues(10_000.0, 1_000.0, 5))
                 .build();

@@ -7,7 +7,7 @@ public final class oloReferential {
     private static final int DUREE_MAX_REFERENTIEL = 30;
 
     private static final Map<Integer, Double> OLO_MAP_REFERENTIAL = Map.ofEntries(
-            Map.entry(1, 2.62*0.7),
+            Map.entry(1, ),
             Map.entry(2, 2.72*0.7),
             Map.entry(3, 2.83*0.7),
             Map.entry(4, 2.95*0.7),
