@@ -44,7 +44,7 @@ public final class oloReferential {
 
     public static double tauxPourDuree(int dureeAnnees) {
         if (dureeAnnees < 0) {
-            throw new IllegalArgumentException("La durée ne peut être négative : " + dureeAnnees);
+            return 0.0;
         }
         if (dureeAnnees == 0) {
             return 0.0;

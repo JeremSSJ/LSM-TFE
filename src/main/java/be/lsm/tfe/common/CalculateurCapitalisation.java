@@ -27,13 +27,12 @@ public final class CalculateurCapitalisation {
      * @return Somme des économies fiscales capitalisées à l'échéance (€)
      */
     public static double capitaliserEconomiesFiscales(List<ResultatAnnuel> annees, int dureeTotal) {
-        double tauxOLO = oloReferential.tauxPourDuree(dureeTotal);
         return IntStream.range(0, annees.size())
                 .mapToDouble(t -> {
                     double economie = annees.get(t).economiesFiscales();
                     int anneesRestantes = dureeTotal - (t + 1);
                     // anneesRestantes ∈ [0, dureeTotal-1] → toujours ≥ 0
-                    return economie * Math.pow(1.0 + tauxOLO, anneesRestantes);
+                    return economie * Math.pow(1.0 + oloReferential.tauxPourDuree(anneesRestantes), anneesRestantes);
                 })
                 .sum();
     }

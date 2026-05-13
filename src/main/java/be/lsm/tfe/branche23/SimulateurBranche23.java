@@ -68,7 +68,7 @@ public final class SimulateurBranche23 implements Simulateur {
 
             double economie = calculerEconomieFiscale(age, versementAnnuel);
 
-            double taxeCompteTitresAnnuelle = 0.0;
+            double taxeCompteTitresAnnuelle = 0.0; //todo attention
             reserve = reserveAvantVersement - taxeCompteTitresAnnuelle + versementNet;
             taxeCompteTitresTotale += taxeCompteTitresAnnuelle;
 

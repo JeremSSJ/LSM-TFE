@@ -48,7 +48,7 @@ public final class SimulateurCT implements Simulateur {
                     ? 0.0
                     : capitaliserReserve(reserve, rendement);
 
-            double taxeCompteTitresAnnuelle = 0.0;
+            double taxeCompteTitresAnnuelle = 0.0; //todo attention
             reserve = reserveAvantVersement - taxeCompteTitresAnnuelle + versementAnnuel;
             taxeCompteTitresTotale += taxeCompteTitresAnnuelle;
 
