@@ -50,9 +50,8 @@ public final class CalculateurCapitalisation {
      * @return Somme des coûts capitalisés à l'échéance (€)
      */
     public static double capitaliserCoutsAnnuels(double coutAnnuel, int dureeAnnees) {
-        double tauxOLO = oloReferential.tauxPourDuree(dureeAnnees);
         return IntStream.rangeClosed(0, dureeAnnees)
-                .mapToDouble(t -> coutAnnuel * Math.pow(1.0 + tauxOLO, dureeAnnees - t))
+                .mapToDouble(t -> coutAnnuel * Math.pow(1.0 + oloReferential.tauxPourDuree(dureeAnnees - t), dureeAnnees - t))
                 .sum();
     }
 }
