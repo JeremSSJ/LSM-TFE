@@ -86,7 +86,7 @@ public final class ScenarioStatistiquesCompletLast {
                 .taxeOperationsBourse(0.0012)
                 .fraisParVersement(0.0)
                 .fraisGestionAnnuels(0.0)
-                .tauxTaxePlusValues(0.10)
+                .tauxTaxePlusValues(0.3)
                 .exoneration(new ExonerationPlusValues(10_000.0, 1_000.0, 5))
                 .build();
 
