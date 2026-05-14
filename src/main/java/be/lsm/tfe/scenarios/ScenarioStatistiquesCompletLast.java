@@ -49,7 +49,7 @@ public final class ScenarioStatistiquesCompletLast {
     private static final int    ANNEE_NAISS   = 2008;
     private static final double OLO           = 0.02;
 
-    private static final double RENDEMENT_MIN = 0.02;
+    private static final double RENDEMENT_MIN = 0.0;
     private static final double RENDEMENT_MAX = 0.1;
     private static final double RENDEMENT_PAS = 0.01;
 
@@ -93,8 +93,8 @@ public final class ScenarioStatistiquesCompletLast {
         // ── Paramètres B23 EP et ELT (communs à tous les profils d'âge) ──────
         ParametresBranche23 paramsEP = ParametresBranche23.builder()
                 .taxeOperationsAssurance(0.0)
-                .fraisParPrime(0.0283)
-                .fraisGestionAnnuels(0.0234)
+                .fraisParPrime(0.0)
+                .fraisGestionAnnuels(0.0)
                 .tauxTaxeAnticipative(0.08)
                 .ageTaxeAnticipative(60)
                 .dureeMinAvantAnticipativeSiSouscritTard(10)
@@ -104,8 +104,8 @@ public final class ScenarioStatistiquesCompletLast {
 
         ParametresBranche23 paramsELT = ParametresBranche23.builder()
                 .taxeOperationsAssurance(Constants.ELT_TAXE_ASSURANCE)
-                .fraisParPrime(0.0283)
-                .fraisGestionAnnuels(0.0234)
+                .fraisParPrime(0.0)
+                .fraisGestionAnnuels(0.0)
                 .tauxTaxeAnticipative(0.10)
                 .ageTaxeAnticipative(60)
                 .dureeMinAvantAnticipativeSiSouscritTard(10)
