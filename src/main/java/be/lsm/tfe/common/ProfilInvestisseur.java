@@ -25,7 +25,7 @@ public record ProfilInvestisseur(
 
     public int dureeAnnees()              { return ageFin - ageDebut; }
 
-    public boolean souscritApres55Ans()   { return ageDebut >= 55; }
+    public boolean souscritApres55Ans()   { return ageDebut > 55; }
 
     @Override
     public String toString() {
