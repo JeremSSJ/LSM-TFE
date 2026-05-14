@@ -68,7 +68,51 @@ class CalculateurCapitalisationTest {
         assertThat(resultat).isCloseTo(500.0, within(1e-9));
     }
 
-    // ── capitaliserCoutsAnnuels ───────────────────────────────────────────────
+    @Test
+    @DisplayName("Économie reçue après échéance → flux actualisé vers l'échéance avec taux OLO propre à la durée de l'écart")
+    void economieApresEcheance_estActualisee() {
+        // dureeTotal = 1 :
+        //   t=0 → reçue à l'année 1 → anneesRestantes = 0 → facteur 1 (taux OLO(0)=0)
+        //   t=1 → reçue à l'année 2 → anneesRestantes = -1 → actualisation 1 an au taux OLO(1)
+        List<ResultatAnnuel> annees = List.of(
+                ResultatAnnuel.builder().economiesFiscales(500.0).build(),
+                ResultatAnnuel.builder().economiesFiscales(500.0).build()
+        );
+
+        double tauxOlo1an = oloReferential.tauxPourDuree(1);
+        double attendu = 500.0 + (500.0 / (1.0 + tauxOlo1an));
+
+        double resultat = CalculateurCapitalisation.capitaliserEconomiesFiscales(annees, 1);
+
+        assertThat(resultat).isCloseTo(attendu, within(1e-9));
+    }
+
+    @Test
+    @DisplayName("Chaque flux utilise le taux OLO de sa propre durée résiduelle")
+    void chaqueCashflowUtiliseSonPropreTauxOlo() {
+        // dureeTotal = 3 : 4 éléments (t=0,1,2,3)
+        //   t=0 → anneesRestantes=2 → taux OLO(2)
+        //   t=1 → anneesRestantes=1 → taux OLO(1)
+        //   t=2 → anneesRestantes=0 → facteur 1
+        //   t=3 → anneesRestantes=-1 → taux OLO(1) en actualisation
+        List<ResultatAnnuel> annees = List.of(
+                ResultatAnnuel.builder().economiesFiscales(100.0).build(),
+                ResultatAnnuel.builder().economiesFiscales(100.0).build(),
+                ResultatAnnuel.builder().economiesFiscales(100.0).build(),
+                ResultatAnnuel.builder().economiesFiscales(100.0).build()
+        );
+
+        double t2 = oloReferential.tauxPourDuree(2);
+        double t1 = oloReferential.tauxPourDuree(1);
+        double attendu = 100.0 * Math.pow(1 + t2, 2)   // t=0
+                       + 100.0 * Math.pow(1 + t1, 1)    // t=1
+                       + 100.0                           // t=2
+                       + 100.0 * Math.pow(1 + t1, -1);  // t=3
+
+        double resultat = CalculateurCapitalisation.capitaliserEconomiesFiscales(annees, 3);
+
+        assertThat(resultat).isCloseTo(attendu, within(1e-9));
+    }
 
     @Test
     @DisplayName("Coût de 0 → résultat nul")

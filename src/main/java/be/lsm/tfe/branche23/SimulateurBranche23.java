@@ -91,7 +91,7 @@ public final class SimulateurBranche23 implements Simulateur {
         int    duree           = profil.dureeAnnees();
 
         // Capitalisation des économies fiscales vers l'échéance au taux OLO net de la durée
-        double ecoCapitalisees = CalculateurCapitalisation.capitaliserEconomiesFiscales(annees, duree + 1);
+        double ecoCapitalisees = CalculateurCapitalisation.capitaliserEconomiesFiscales(annees, duree);
         double valeurTerminale = capitalFinalNet + ecoCapitalisees;
 
         return new ResultatSimulation(
