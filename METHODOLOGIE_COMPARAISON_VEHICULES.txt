@@ -129,6 +129,21 @@ Formellement :
 
   taux_net = taux_brut × (1 − 30 %) = taux_brut × 0,7
 
+Principe du taux par flux :
+  Chaque flux annexe est transporté vers l'échéance avec le taux OLO correspondant
+  à la durée résiduelle de CE flux spécifique, et non à la durée totale de l'horizon.
+  Formellement, pour un flux dont la durée résiduelle est n :
+
+    taux_flux = r(|n|)      (durée absolue utilisée pour la lookup dans le référentiel)
+    facteur   = (1 + r(|n|))^n
+
+  Ce design garantit que chaque flux bénéficie de la prime de terme correcte :
+    • Un flux lointain est capitalisé au taux long correspondant à son horizon.
+    • Un flux proche est capitalisé au taux court correspondant à son horizon.
+    • Utiliser un taux unique (celui de l'horizon total) pour tous les flux introduirait
+      un biais systématique : le taux de la 47e année appliqué à un flux résiduel de
+      2 ans surestime la capitalisation de ce flux.
+
 Table des taux du référentiel (brut → net utilisé pour la capitalisation) :
 
   Année   OLO brut (%)   OLO net utilisé (%)
@@ -177,12 +192,36 @@ La valeur terminale B23 est décomposée en deux composantes :
     annuelle éventuelle).
 
   • EcoFiscalesCapitalisees_B23 :
-    Somme des réductions d'impôt annuelles capitalisées jusqu'à l'échéance.
-    Pour l'économie fiscale de l'année t (perçue en t+1), le nombre d'années
-    restantes est : (dureeTotale - (t+1)).
+    Somme des réductions d'impôt annuelles ramenées à l'échéance.
+    L'économie fiscale de l'index t est reçue en fin d'année (t+1).
+    Le nombre d'années résiduelles par rapport à l'échéance est :
 
-        EcoCap = Σ [Economie(t) × (1 + r(anneesRestantes))^(anneesRestantes)]
-                 pour t = 0 à N-1
+        anneesRestantes(t) = dureeTotale − (t+1)
+
+    Chaque flux est transporté vers l'échéance avec le taux OLO de sa propre
+    durée résiduelle absolue (r(|anneesRestantes|)) :
+
+        EcoCap = Σ [Economie(t) × (1 + r(|anneesRestantes(t)|))^(anneesRestantes(t))]
+                 pour t = 0 à N−1
+
+    Trois cas se présentent selon le signe de anneesRestantes(t) :
+
+      anneesRestantes > 0  →  capitalisation vers l'échéance
+                               ex. : éco reçue à 19 ans pour un horizon 18→65 :
+                               anneesRestantes = 46, taux = r(46) → r(30) [plafonné]
+
+      anneesRestantes = 0  →  flux déjà à l'échéance, facteur = 1
+                               ex. : éco reçue à 65 ans (versement de l'année 64→65)
+
+      anneesRestantes < 0  →  actualisation vers l'échéance (flux reçu après maturité)
+                               ex. : éco reçue à 66 ans (versement de l'année 65→66) :
+                               anneesRestantes = −1, taux = r(1) → facteur = 1/(1 + r(1))
+
+    Justification de l'actualisation du dernier flux :
+      Lors d'un investissement 18→65, l'investisseur verse une prime à 65 ans qui
+      génère une réduction fiscale remboursée lors de la déclaration de l'année
+      suivante, soit à 66 ans. Pour comparer ce flux sur la même base temporelle
+      que le capital reçu à 65 ans, il est actualisé d'un an au taux OLO 1 an.
 
 4.2 VT d'un Compte-Titres
 ──────────────────────────
@@ -194,10 +233,15 @@ La valeur terminale du CT intègre le capital net et les coûts capitalisés :
     Capital final net après taxe éventuelle sur les plus-values.
 
   • FeesCapitalises_CT :
-    Coûts annuels (TOB + frais par versement) capitalisés à l'échéance :
+    Coûts annuels (TOB + frais par versement) capitalisés à l'échéance.
+    Chaque coût payé à la période t est capitalisé avec le taux OLO de sa propre
+    durée résiduelle (duree − t) :
 
-        FeesCap = Σ [CoutAnnuel × (1 + r(duree - t))^(duree - t)]
+        FeesCap = Σ [CoutAnnuel × (1 + r(duree − t))^(duree − t)]
                   pour t = 0 à duree
+
+    Cohérence avec la méthode B23 : comme pour les économies fiscales, chaque flux
+    utilise le taux OLO correspondant à sa durée résiduelle propre.
 
 4.3 Comparaison
 ───────────────
