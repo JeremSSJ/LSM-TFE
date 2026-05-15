@@ -47,7 +47,6 @@ public final class ScenarioStatistiquesCompletLast {
     private static final int    AGE_DEBUT_MAX = 55;
 
     private static final int    ANNEE_NAISS   = 2008;
-    private static final double OLO           = 0.02;
 
     private static final double RENDEMENT_MIN = 0.0;
     private static final double RENDEMENT_MAX = 0.1;
@@ -86,7 +85,7 @@ public final class ScenarioStatistiquesCompletLast {
                 .taxeOperationsBourse(0.0012)
                 .fraisParVersement(0.0)
                 .fraisGestionAnnuels(0.0)
-                .tauxTaxePlusValues(0.3)
+                .tauxTaxePlusValues(0.1)
                 .exoneration(new ExonerationPlusValues(10_000.0, 1_000.0, 5))
                 .build();
 
@@ -178,25 +177,31 @@ public final class ScenarioStatistiquesCompletLast {
                 epSans.add(LigneRapportCSV.depuis(
                         CalculateurStatistiques.calculer(
                                 resEP, resCTsanEP, "EP Branche 23", "CT sans taxe PV"),
-                        rendArrondi * 100, ageDebut, AGE_FIN, 0.0));
+                        rendArrondi * 100, ageDebut, AGE_FIN,
+                        paramsCTsans.tauxTaxePlusValues() * 100));
 
                 // ── EP vs CT avec taxe PV ─────────────────────────────────────
                 epAvec.add(LigneRapportCSV.depuis(
                         CalculateurStatistiques.calculer(
-                                resEP, resCTavEP, "EP Branche 23", "CT taxe PV 10%"),
-                        rendArrondi * 100, ageDebut, AGE_FIN, 10.0));
+                                resEP, resCTavEP, "EP Branche 23",
+                                "CT taxe PV %.0f%%".formatted(paramsCTavec.tauxTaxePlusValues() * 100)),
+                        rendArrondi * 100, ageDebut, AGE_FIN,
+                        paramsCTavec.tauxTaxePlusValues() * 100));
 
                 // ── ELT vs CT sans taxe PV ────────────────────────────────────
                 eltSans.add(LigneRapportCSV.depuis(
                         CalculateurStatistiques.calculer(
                                 resELT, resCTsanELT, "ELT Branche 23", "CT sans taxe PV"),
-                        rendArrondi * 100, ageDebut, AGE_FIN, 0.0));
+                        rendArrondi * 100, ageDebut, AGE_FIN,
+                        paramsCTsans.tauxTaxePlusValues() * 100));
 
                 // ── ELT vs CT avec taxe PV ────────────────────────────────────
                 eltAvec.add(LigneRapportCSV.depuis(
                         CalculateurStatistiques.calculer(
-                                resELT, resCTavELT, "ELT Branche 23", "CT taxe PV 10%"),
-                        rendArrondi * 100, ageDebut, AGE_FIN, 10.0));
+                                resELT, resCTavELT, "ELT Branche 23",
+                                "CT taxe PV %.0f%%".formatted(paramsCTavec.tauxTaxePlusValues() * 100)),
+                        rendArrondi * 100, ageDebut, AGE_FIN,
+                        paramsCTavec.tauxTaxePlusValues() * 100));
 
                 lignesTraitees++;
             }
