@@ -158,15 +158,16 @@ public final class GenerateurHeatmap {
     private static Color couleurCellule(LigneRapportCSV l, String nomB23) {
         if (l == null) return Color.LIGHT_GRAY;
 
-        boolean b23Domine = l.dominant().contains(nomB23)
-                || l.dominant().startsWith("EP")
-                || l.dominant().startsWith("ELT");
-        boolean exAequo   = l.dominant().contains("æquo") || l.dominant().equals("Aucun");
+        double tauxA = l.tauxDominanceA();
+        double tauxB = l.tauxDominanceB();
 
-        if (exAequo) return BASE_EX;
+        // Ex æquo : les deux taux sont égaux (ou tous les deux à 0)
+        if (Math.abs(tauxA - tauxB) < 1e-6) return BASE_EX;
+
+        boolean b23Domine = tauxA > tauxB;
 
         // Intensité : 0.3 (dominance faible) → 1.0 (dominance totale)
-        double taux = b23Domine ? l.tauxDominanceA() : l.tauxDominanceB();
+        double taux = b23Domine ? tauxA : tauxB;
         double intensite = 0.30 + (taux / 100.0) * 0.70;
 
         Color base = b23Domine ? BASE_B23 : BASE_CT;
